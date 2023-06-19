@@ -49,8 +49,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     // called from viewWillAppear to set up properties of the two text fields.
-    func setupText(_ textField:UITextField...) {
-        for text in textField {
+    func setupText(_ textFields:UITextField...) {
+        for text in textFields {
             text.defaultTextAttributes = memeTextAttributes
             text.textAlignment = .center
             text.autocapitalizationType = .allCharacters
@@ -69,6 +69,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         super.viewDidLoad()
         topText.delegate = self
         bottomText.delegate = self
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+           view.addGestureRecognizer(tapGesture)
     }
     
     
@@ -79,6 +81,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
        
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
+        pickerController.allowsEditing = true
+        let cropRect = memeView.frame
+      //  pickerController.setCropRect(memeView.frame) - apparently this is deprecated
         
         // choose camera or photo album depending on which button was pressed
         switch sender.tag {
@@ -91,7 +96,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         present(pickerController, animated: true, completion: nil)
     }
 
-   
     
     @IBAction func share(_ sender: Any) {
       let memedImage = generateMemedImage()
@@ -129,12 +133,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
             popOver.sourceView = self.view
         }
         present(activityController, animated: true, completion: nil)
-
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     
     
-    // MARK: Functions that help move the keyboard so it won't obscure content
+    // MARK: Functions that help move content out from behind the keyboard when it appears
     
     
     func subscribeToKeyboardNotifications() {
@@ -185,7 +192,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     func getViewOffset(textField:UITextField, keyboardHeight:CGFloat) -> CGFloat {
         let margin:CGFloat = 20.0
         var bottomOfTextField = textField.frame.maxY
-        // If the text field is located in another view, retrieve its coordinates relative to the main view instead.
+        // If the text field is located in a superview, calculate its coordinates relative to the main view instead.
         let textFieldRect = textField.superview?.convert(textField.frame, to:view)
         if let rect = textFieldRect {
             bottomOfTextField = rect.maxY
@@ -204,16 +211,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     // MARK: Text field delegate functions
     
 
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        if isEmpty(textField.text) {
-            textField.text = textField.placeholder
-        }
         toggleShareButton()
         return true
     }
     
+    
+    // Presents an empty field to edit if user content has not been provided; otherwise allows the user to edit their previously entered text.
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if textField.text == textField.placeholder {
             textField.text = ""
@@ -225,17 +231,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     
     // MARK: Image Picker functions
     
+    
+    // Deals with a selected image
     func imagePickerController(_ picker:UIImagePickerController,didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
   
-        // Once the user picks an image, display it onscreen.
-
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            myPhoto.image = image
-            toggleShareButton()
-        } else {
-            myPhoto.image = testImage // to help with debugging if there's a problem
-        }
+        /* Once the user picks an image, display it onscreen.
+            Choose the edited version of the image to use, if there is one. */
         
+            if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+                myPhoto.image = image
+            } else {
+                
+                if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                    myPhoto.image = image
+                } else {
+                    
+                    myPhoto.image = testImage // to help with debugging if there's a problem
+                }}
+            
+        toggleShareButton()
         dismiss(animated: true, completion: nil)
     }
     
@@ -246,21 +260,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     
     
  
-    
+    // Turns the meme elements into a single image which can then be shared or saved.
     func generateMemedImage() -> UIImage {
         
-     
-       /* This is the original code given in the assignment for capturing the memed image.
-        // Render view to an image
+       /* Instructions were to hide the toolbar, capture the image with the code given below, then show the toolbar, in order to capture the photo without the toolbar showing.
+        
+       Render view to an image
        UIGraphicsBeginImageContext(memeView.frame.size)
        drawHierarchy(in: memeView.frame, afterScreenUpdates: true)
        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
        UIGraphicsEndImageContext()
         */
         
-        /* The following is my own approach.
-         I arranged the meme elements into a view called memeView and used the following code to capture that view.
-         This way my final meme looks exactly like what you see onscreen above the toolbar.
+        
+        /* I took a different approach. I wanted the user to be able to see exactly what the meme will look like without the toolbar obscuring part of the view.
+         So I arranged the meme elements into a view called memeView, which is completely visible above the toolbar. The following code captures that view.
          */
         
         let renderer = UIGraphicsImageRenderer(size: memeView.bounds.size)
@@ -271,9 +285,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         return memedImage
     }
     
-    // Share button is toggled after changes to the photo or either text field.
-    // If any of the elements are missing (photo or either text field) the share button is disabled.
     
+    /* The share button is toggled after changes to the photo or either text field.
+       If any of the elements are missing (photo or either text field) the share button is disabled.
+     */
     func toggleShareButton() {
         if myPhoto.image == nil || topText.text == topText.placeholder || bottomText.text == bottomText.placeholder {
             shareButton.isEnabled = false

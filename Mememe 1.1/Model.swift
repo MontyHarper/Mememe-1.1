@@ -25,6 +25,7 @@ struct Meme {
 
 
 // This func determines whether an optional string is either nil or consists only of spaces and so appears to be empty
+// Currently the app doesn't use this for anything.
 
 func isEmpty(_ text:String?) -> Bool {
   
