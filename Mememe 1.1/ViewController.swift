@@ -6,17 +6,21 @@
 //
 
 import UIKit
+import TOCropViewController
+import CropViewController
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
  
     
 // MARK: IBOutlets
     
     @IBOutlet weak var myPhoto: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
-    @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var cropButton: UIBarButtonItem!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var topText: UITextField!
     @IBOutlet weak var bottomText: UITextField!
+    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var memeView: UIView!
 
 
@@ -25,7 +29,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
 // MARK: Properties
     
     // Default image to use for testing purposes
-    let testImage: UIImage = UIImage(named:"Sinclair-ZX81")!
+    let defaultImage: UIImage = UIImage(named:"Sinclair-ZX81")!
     
     // Dictionary of text attributes for the meme top and bottom text
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
@@ -34,6 +38,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         .font: UIFont(name: "Impact", size: 40)!,
         .strokeWidth:  -4.0,
     ]
+    
+    // Struct instance in which to store the working meme.
+    var myMeme = Meme()
+            
+    // Track whether the view is raised or lowered, to keep from raising or lowering when unnecessary.
+    var viewIsRaised:Bool = false
+    
+    // Use to prevent text fields from reverting to original state when view is re-drawn.
+    var textSetupIsComplete:Bool = false
     
     
     
@@ -44,31 +57,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         super.viewWillAppear(animated)
         subscribeToKeyboardNotifications()
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
-        setupText(topText,bottomText)
-        toggleShareButton()
-    }
-    
-    // called from viewWillAppear to set up properties of the two text fields.
-    func setupText(_ textFields:UITextField...) {
-        for text in textFields {
-            text.defaultTextAttributes = memeTextAttributes
-            text.textAlignment = .center
-            text.autocapitalizationType = .allCharacters
-            // placeholder text is set in storyboard, stored here & used to replace an empty text field
-            text.placeholder = text.text
+        if !textSetupIsComplete {
+            setupText(topText,bottomText) // Formats the text fields
         }
-        
+        toggleButtons() // Activates or deactivates crop and share buttons as appropriate
     }
     
+
     override func viewWillDisappear(_ animated:Bool) {
         super.viewWillDisappear(animated)
         unsubscribeFromKeyboardNotifications()
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         topText.delegate = self
         bottomText.delegate = self
+        // Allows user to dismiss the keyboard by tapping elsewhere
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
            view.addGestureRecognizer(tapGesture)
     }
@@ -81,13 +87,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
        
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
-        pickerController.allowsEditing = true
-        let cropRect = memeView.frame
-      //  pickerController.setCropRect(memeView.frame) - apparently this is deprecated
         
         // choose camera or photo album depending on which button was pressed
-        switch sender.tag {
-        case 1:
+        switch sender {
+        case cameraButton:
             pickerController.sourceType = .camera
         default:
             pickerController.sourceType = .photoLibrary
@@ -96,6 +99,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         present(pickerController, animated: true, completion: nil)
     }
 
+    
+    @IBAction func crop() {
+        if let image = myMeme.image {
+            presentCropViewController(image)
+        } else {
+            toggleButtons() // Crop button should already be disabled if there is no image.
+        }
+    }
+    
     
     @IBAction func share(_ sender: Any) {
       let memedImage = generateMemedImage()
@@ -107,12 +119,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
             if completed {
                 /* Save the meme if the activity was completed.
-                 I'm not sure why we're saving the meme to begin with or what that even means.
-                 I can assign the meme to a variable but then what?
-                 (We haven't covered persistant data yet.)
-                 I assume this will come into play in Mememe 2.0. */
+                   Note that the original image and the cropped image should already be saved */
                 
-                let myMeme = Meme(topText: self.topText.text!, bottomText: self.bottomText.text!, image: self.myPhoto.image!, memedImage: memedImage)
+                self.myMeme.topText = self.topText.text!
+                self.myMeme.bottomText = self.bottomText.text!
+                self.myMeme.memedImage = memedImage
                 
             } else {
                 // The sharing action was canceled, handle the cancellation if needed
@@ -127,21 +138,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
             self.dismiss(animated: true, completion: nil)
         }
         
-        // End of completion handler. Continuing with the share function...
-
       if let popOver = activityController.popoverPresentationController {
             popOver.sourceView = self.view
         }
         present(activityController, animated: true, completion: nil)
     }
     
+    
+    // Called by tapping outside of keyboard
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
     
     
     
-    // MARK: Functions that help move content out from behind the keyboard when it appears
+    // MARK: Functions that help move content up or down when keyboard appears or disappears
     
     
     func subscribeToKeyboardNotifications() {
@@ -155,23 +166,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
+    // Moves the view up out of the way of the keyboard
     @objc func keyboardWillShow(_ notification:Notification) {
-        var activeTextField:UITextField
-        if bottomText.isFirstResponder {
-            activeTextField = bottomText
-        } else {
-            activeTextField = topText
-        }
-        let viewOffset = getViewOffset(textField: activeTextField, keyboardHeight: getKeyboardHeight(notification))
         
-        if viewOffset != 0 {
-            view.frame.origin.y -= viewOffset
+        if bottomText.isFirstResponder && !viewIsRaised {
+            let keyboardHeight = getKeyboardHeight(notification)
+            let frameOrigin = view.frame.origin.y
+            view.frame.origin.y = frameOrigin - keyboardHeight
+            toolbar.isHidden = true
+            viewIsRaised = true
         }
     }
     
-  
+    
+    // Moves the view down when the keyboard is hidden
     @objc func keyboardWillHide(_ notification:Notification) {
-        view.frame.origin.y = 0
+        
+        if viewIsRaised {
+            let keyboardHeight = getKeyboardHeight(notification)
+            let frameOrigin = view.frame.origin.y
+            view.frame.origin.y = frameOrigin + keyboardHeight
+            bottomText.resignFirstResponder()
+            toolbar.isHidden = false
+            viewIsRaised = false
+        }
     }
    
     
@@ -181,40 +199,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         return keyboardSize.cgRectValue.height
     }
     
+
     
+    // MARK: Text field functions
     
-    /* This function calculates the distance the view should be shifted up to accomodate the keyboard.
-     We don't move the view unless the keyboard will obstruct the text field in quesiton.
-     I also didn't want to assume that the top text field would never be obstructed, so this function calculates an upward shift for any given text field if the keyboard would obstruct it.
-     Question: could we use the keyboardTrackingLayoutGuide to do this, and how does that work?
-     */
-    
-    func getViewOffset(textField:UITextField, keyboardHeight:CGFloat) -> CGFloat {
-        let margin:CGFloat = 20.0
-        var bottomOfTextField = textField.frame.maxY
-        // If the text field is located in a superview, calculate its coordinates relative to the main view instead.
-        let textFieldRect = textField.superview?.convert(textField.frame, to:view)
-        if let rect = textFieldRect {
-            bottomOfTextField = rect.maxY
-        }
-        let bottomOfScreen = view.frame.maxY
-        let topOfKeyboard = bottomOfScreen - keyboardHeight
-        if topOfKeyboard < bottomOfTextField + margin {
-            return (bottomOfTextField - topOfKeyboard + 2 * margin)
-        } else {
-            return 0
-        }
+    // Formats the text fields
+    func setupText(_ textFields:UITextField...) {
+        for text in textFields {
+            text.defaultTextAttributes = memeTextAttributes
+            text.textAlignment = .center
+            text.autocapitalizationType = .allCharacters
+            // placeholder text is set in storyboard, stored here & used to replace an empty text field
+            text.placeholder = text.text
+            }
+        textSetupIsComplete = true
     }
     
-
-    
-    // MARK: Text field delegate functions
-    
-
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField.text == "" {
+            textField.text = textField.placeholder
+        }
+        toggleButtons()
         textField.resignFirstResponder()
-        toggleShareButton()
         return true
     }
     
@@ -235,22 +242,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     // Deals with a selected image
     func imagePickerController(_ picker:UIImagePickerController,didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
   
-        /* Once the user picks an image, display it onscreen.
-            Choose the edited version of the image to use, if there is one. */
-        
-            if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-                myPhoto.image = image
-            } else {
+        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            myMeme.image = image
+            dismiss(animated: false, completion: nil)
+            presentCropViewController(image) // Give the user a chance to crop the selected photo
                 
-                if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                    myPhoto.image = image
-                } else {
-                    
-                    myPhoto.image = testImage // to help with debugging if there's a problem
-                }}
-            
-        toggleShareButton()
-        dismiss(animated: true, completion: nil)
+            } else {
+                myPhoto.image = defaultImage // to help with debugging if there's a problem
+            }
     }
     
     
@@ -259,6 +258,32 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
+    
+    // MARK: Crop View Controller functions
+    
+    // presents the crop view controller with settings allowing the user to resize the image keeping the aspect ratio of the photo view
+    func presentCropViewController(_ image:UIImage) {
+        let cropView = CropViewController(image: image)
+        cropView.delegate = self
+        cropView.customAspectRatio = CGSize(width: myPhoto.frame.width, height: myPhoto.frame.height)
+        cropView.aspectRatioLockEnabled = true
+        cropView.aspectRatioPickerButtonHidden = true
+        cropView.onDidFinishCancelled = { didFinishCancelled in
+            self.myPhoto.image = image
+            self.dismiss(animated:true, completion:nil)
+            }
+        present(cropView, animated: true, completion: nil)
+    }
+
+    // handles the edited image once it has been cropped
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+        self.myPhoto.image = image
+        myMeme.croppedImage = image
+        self.dismiss(animated: true, completion: nil)
+   }
+    
+    
+    // MARK: More Functions
  
     // Turns the meme elements into a single image which can then be shared or saved.
     func generateMemedImage() -> UIImage {
@@ -274,7 +299,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
         
         
         /* I took a different approach. I wanted the user to be able to see exactly what the meme will look like without the toolbar obscuring part of the view.
-         So I arranged the meme elements into a view called memeView, which is completely visible above the toolbar. The following code captures that view.
+         So I arranged the meme elements above the toolbar. The following code captures that view.
          */
         
         let renderer = UIGraphicsImageRenderer(size: memeView.bounds.size)
@@ -286,16 +311,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
-    /* The share button is toggled after changes to the photo or either text field.
+    /* Buttons are toggled after changes to the photo or either text field.
        If any of the elements are missing (photo or either text field) the share button is disabled.
-     */
-    func toggleShareButton() {
+       If no photo exists the crop button is disabled. */
+    
+    func toggleButtons() {
+        print("photo: \(myPhoto.image == nil), top: \(topText.text == topText.placeholder), bottom: \(bottomText.text == bottomText.placeholder)")
+        print("top placeholder = \(topText.placeholder ?? "nil"), bottom placeholder = \(bottomText.placeholder ?? "nil")")
         if myPhoto.image == nil || topText.text == topText.placeholder || bottomText.text == bottomText.placeholder {
             shareButton.isEnabled = false
         } else {
             shareButton.isEnabled = true
         }
-    }
+        if myPhoto.image == nil {
+            cropButton.isEnabled = false
+        } else {
+            cropButton.isEnabled = true
+            }
+        }
     
 }
 

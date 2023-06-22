@@ -14,6 +14,8 @@
 		F1A9EDE52A3DE9A600E11C18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1A9EDE42A3DE9A600E11C18 /* Assets.xcassets */; };
 		F1A9EDE82A3DE9A600E11C18 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1A9EDE62A3DE9A600E11C18 /* LaunchScreen.storyboard */; };
 		F1A9EDF02A3DEA8800E11C18 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A9EDEF2A3DEA8800E11C18 /* Model.swift */; };
+		F1A9EDF32A40BEB700E11C18 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = F1A9EDF22A40BEB700E11C18 /* CropViewController */; };
+		F1A9EDF52A40BEB700E11C18 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = F1A9EDF42A40BEB700E11C18 /* TOCropViewController */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1A9EDF52A40BEB700E11C18 /* TOCropViewController in Frameworks */,
+				F1A9EDF32A40BEB700E11C18 /* CropViewController in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +90,10 @@
 			dependencies = (
 			);
 			name = "Mememe 1.1";
+			packageProductDependencies = (
+				F1A9EDF22A40BEB700E11C18 /* CropViewController */,
+				F1A9EDF42A40BEB700E11C18 /* TOCropViewController */,
+			);
 			productName = "Mememe 1.1";
 			productReference = F1A9EDD82A3DE9A400E11C18 /* Mememe 1.1.app */;
 			productType = "com.apple.product-type.application";
@@ -114,6 +122,9 @@
 				Base,
 			);
 			mainGroup = F1A9EDCF2A3DE9A400E11C18;
+			packageReferences = (
+				F1A9EDF12A40BEB700E11C18 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
+			);
 			productRefGroup = F1A9EDD92A3DE9A400E11C18 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -362,6 +373,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F1A9EDF12A40BEB700E11C18 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F1A9EDF22A40BEB700E11C18 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1A9EDF12A40BEB700E11C18 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		F1A9EDF42A40BEB700E11C18 /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F1A9EDF12A40BEB700E11C18 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F1A9EDD02A3DE9A400E11C18 /* Project object */;
 }

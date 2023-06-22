@@ -17,8 +17,9 @@ struct Meme {
     
     var topText: String = "TOP TEXT"
     var bottomText: String = "BOTTOM TEXT"
-    var image: UIImage
-    var memedImage: UIImage
+    var image: UIImage?
+    var croppedImage: UIImage?
+    var memedImage: UIImage?
     
 }
 
