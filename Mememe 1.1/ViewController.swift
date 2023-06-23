@@ -265,8 +265,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     func presentCropViewController(_ image:UIImage) {
         let cropView = CropViewController(image: image)
         cropView.delegate = self
-        cropView.customAspectRatio = CGSize(width: myPhoto.frame.width, height: myPhoto.frame.height)
+        cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
         cropView.aspectRatioLockEnabled = true
+        // This thing is supposed change aspect ratio for landscape but not sure that it works well.
+        cropView.aspectRatioLockDimensionSwapEnabled = true
+        if let rect = myMeme.cropFrame {
+            cropView.imageCropFrame = rect
+        }
         cropView.aspectRatioPickerButtonHidden = true
         cropView.onDidFinishCancelled = { didFinishCancelled in
             self.myPhoto.image = image
@@ -279,6 +284,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         self.myPhoto.image = image
         myMeme.croppedImage = image
+        myMeme.cropFrame = cropRect
         self.dismiss(animated: true, completion: nil)
    }
     
@@ -288,19 +294,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     // Turns the meme elements into a single image which can then be shared or saved.
     func generateMemedImage() -> UIImage {
         
-       /* Instructions were to hide the toolbar, capture the image with the code given below, then show the toolbar, in order to capture the photo without the toolbar showing.
-        
-       Render view to an image
-       UIGraphicsBeginImageContext(memeView.frame.size)
-       drawHierarchy(in: memeView.frame, afterScreenUpdates: true)
-       let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-       UIGraphicsEndImageContext()
+       /* Instructions were to hide the toolbar, capture the image, then show the toolbar, in order to capture the photo without the toolbar showing.
+          I took a different approach. I wanted the user to be able to see exactly what the meme will look like without the toolbar obscuring part of the view.
+          So I arranged the meme elements above the toolbar. The following code captures that view, without the toolbar.
         */
-        
-        
-        /* I took a different approach. I wanted the user to be able to see exactly what the meme will look like without the toolbar obscuring part of the view.
-         So I arranged the meme elements above the toolbar. The following code captures that view.
-         */
         
         let renderer = UIGraphicsImageRenderer(size: memeView.bounds.size)
         let memedImage = renderer.image { ctx in
@@ -316,8 +313,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
        If no photo exists the crop button is disabled. */
     
     func toggleButtons() {
-        print("photo: \(myPhoto.image == nil), top: \(topText.text == topText.placeholder), bottom: \(bottomText.text == bottomText.placeholder)")
-        print("top placeholder = \(topText.placeholder ?? "nil"), bottom placeholder = \(bottomText.placeholder ?? "nil")")
+    
         if myPhoto.image == nil || topText.text == topText.placeholder || bottomText.text == bottomText.placeholder {
             shareButton.isEnabled = false
         } else {

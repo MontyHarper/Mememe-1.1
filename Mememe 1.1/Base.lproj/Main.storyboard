@@ -16,10 +16,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="844" height="390"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
                                 <rect key="frame" x="0.0" y="324" width="844" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="d18-VN-xnW"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="750" constant="32" id="d18-VN-xnW"/>
                                 </constraints>
                                 <items>
                                     <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" width="100" id="2Tz-Io-jFb">

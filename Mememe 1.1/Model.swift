@@ -19,6 +19,7 @@ struct Meme {
     var bottomText: String = "BOTTOM TEXT"
     var image: UIImage?
     var croppedImage: UIImage?
+    var cropFrame: CGRect?
     var memedImage: UIImage?
     
 }
