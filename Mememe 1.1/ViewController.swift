@@ -244,8 +244,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
   
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             myMeme.image = image
+            myPhoto.image = image
             dismiss(animated: false, completion: nil)
-            presentCropViewController(image) // Give the user a chance to crop the selected photo
+     //       presentCropViewController(image) // Give the user a chance to crop the selected photo
                 
             } else {
                 myPhoto.image = defaultImage // to help with debugging if there's a problem
