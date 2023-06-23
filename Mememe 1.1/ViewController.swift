@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  Mememe 1.0
+//  Mememe 1.1
 //
 //  Created by Monty Harper on 6/3/23.
 //
@@ -48,7 +48,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     // Use to prevent text fields from reverting to original state when view is re-drawn.
     var textSetupIsComplete:Bool = false
     
-    
+    // Use to determine current orientation and crop accordingly. Orientation will be re-set when needed.
+    let device = UIDevice.current
+    var orientation: UIDeviceOrientation = .portrait
+
     
 // MARK: Lifecycle Methods
     
@@ -80,6 +83,36 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
+    /*
+     This function is called whenever the device changes orientation.
+     This allows for the image to be cropped differently for portrait vs. landscape.
+     The if appropriate cropped images exist, the image is switched when the device is turned.
+     If the crop controller is showing it gets dismissed, to prevent saving a crop in the wrong orientation.
+     */
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+   
+        if let pvc = presentedViewController {
+            if pvc is CropViewController {
+                presentedViewController?.dismiss(animated: true, completion: nil)
+            }
+        }
+        
+        orientation = device.orientation
+        switch orientation {
+        case .portrait, .portraitUpsideDown:
+            if let image = myMeme.croppedImagePortrait {
+                myPhoto.image = image
+            }
+        case .landscapeLeft, .landscapeRight:
+            if let image = myMeme.croppedImageLandscape {
+                myPhoto.image = image
+            }
+        default:
+            print("no change")
+        }
+    }
+    
     
 //MARK: IBActions
 
@@ -110,28 +143,30 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     
     
     @IBAction func share(_ sender: Any) {
+        
       let memedImage = generateMemedImage()
       let activityController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
         
-      /* completionWithItemsHandler is an enclosure attatched to the activity view controller, to be defined here.
-       The view controller will execute this code when the user has completed or dismissed the activity. */
-        
-        activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
+      /*
+       completionWithItemsHandler is an enclosure attatched to the activity view controller.
+       The view controller will execute this code when the user has completed or dismissed the activity.
+       */
+      activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
             if completed {
-                /* Save the meme if the activity was completed.
-                   Note that the original image and the cropped image should already be saved */
-                
+                /*
+                 Save the meme if the activity was completed.
+                 Note that the original image and the cropped images are saved when they get selected or changed,
+                 so they should already be attached to the myMeme.
+                 */
                 self.myMeme.topText = self.topText.text!
                 self.myMeme.bottomText = self.bottomText.text!
                 self.myMeme.memedImage = memedImage
                 
             } else {
-                // The sharing action was canceled, handle the cancellation if needed
-                // I don't believe we have anything to do here
+                print("The sharing activity was cancelled.")
             }
 
             if let error = activityError {
-                // Handle the error
                 print(error)
             }
             
@@ -141,8 +176,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
       if let popOver = activityController.popoverPresentationController {
             popOver.sourceView = self.view
         }
-        present(activityController, animated: true, completion: nil)
+      present(activityController, animated: true, completion: nil)
     }
+    
     
     
     // Called by tapping outside of keyboard
@@ -166,7 +202,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
-    // Moves the view up out of the way of the keyboard
+    // Moves the view up out of the way of the keyboard and hides the toolbar as needed.
     @objc func keyboardWillShow(_ notification:Notification) {
         
         if bottomText.isFirstResponder && !viewIsRaised {
@@ -179,7 +215,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
-    // Moves the view down when the keyboard is hidden
+    // Moves the view down when the keyboard is dismissed and shows the toolbar as needed.
     @objc func keyboardWillHide(_ notification:Notification) {
         
         if viewIsRaised {
@@ -226,7 +262,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
-    // Presents an empty field to edit if user content has not been provided; otherwise allows the user to edit their previously entered text.
+    /*
+     Presents an empty field to edit if user content has not been provided.
+     Otherwise, allows the user to edit their previously entered text.
+     */
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if textField.text == textField.placeholder {
             textField.text = ""
@@ -239,17 +278,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     // MARK: Image Picker functions
     
     
-    // Deals with a selected image
+    // Saves a selected image to the meme and sends it to the crop view controller to be cropped.
     func imagePickerController(_ picker:UIImagePickerController,didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
   
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             myMeme.image = image
-            myPhoto.image = image
             dismiss(animated: false, completion: nil)
-     //       presentCropViewController(image) // Give the user a chance to crop the selected photo
+            presentCropViewController(image) // Give the user a chance to crop the selected photo
                 
             } else {
-                myPhoto.image = defaultImage // to help with debugging if there's a problem
+                myPhoto.image = defaultImage // Should never happen.
             }
     }
     
@@ -262,17 +300,33 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     
     // MARK: Crop View Controller functions
     
-    // presents the crop view controller with settings allowing the user to resize the image keeping the aspect ratio of the photo view
+    // Presents the crop view controller with settings allowing the user to resize the image keeping the aspect ratio of the photo view
     func presentCropViewController(_ image:UIImage) {
         let cropView = CropViewController(image: image)
         cropView.delegate = self
         cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
         cropView.aspectRatioLockEnabled = true
-        // This thing is supposed change aspect ratio for landscape but not sure that it works well.
-        cropView.aspectRatioLockDimensionSwapEnabled = true
-        if let rect = myMeme.cropFrame {
-            cropView.imageCropFrame = rect
+        
+        /*
+         Selects the correct cropping frame (cropView) for the current device orientation,
+         if it already exists. Otherwise the cropping frame defaults to the entire photo.
+         Setting cropView based on saved frames allows the user to fine tune the crop as it was last set,
+         rather than starting from scratch each time.
+         */
+        orientation = device.orientation
+        switch orientation {
+        case .portrait, .portraitUpsideDown:
+            if let rect = myMeme.cropFramePortrait {
+                cropView.imageCropFrame = rect
+            }
+        case .landscapeLeft, .landscapeRight:
+            if let rect = myMeme.cropFrameLandscape {
+                cropView.imageCropFrame = rect
+            }
+        default:
+            print("No stored cropping frame.")
         }
+         
         cropView.aspectRatioPickerButtonHidden = true
         cropView.onDidFinishCancelled = { didFinishCancelled in
             self.myPhoto.image = image
@@ -280,26 +334,45 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
             }
         present(cropView, animated: true, completion: nil)
     }
+    
 
     // handles the edited image once it has been cropped
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         self.myPhoto.image = image
-        myMeme.croppedImage = image
-        myMeme.cropFrame = cropRect
+        
+        /*
+         Note that orientation is not updated here. The cropped image and frame are saved
+         according to the orientation from when the controller was presented. This should not have changed,
+         or the controller would have been dismissed by viewWillTransition.
+         */
+        switch orientation {
+        case .portrait, .portraitUpsideDown:
+            myMeme.croppedImagePortrait = image
+            myMeme.cropFramePortrait = cropRect
+        case .landscapeLeft, .landscapeRight:
+            myMeme.croppedImageLandscape = image
+            myMeme.cropFrameLandscape = cropRect
+        default:
+            print("No image stored.")
+        }
+        
         self.dismiss(animated: true, completion: nil)
    }
     
     
-    // MARK: More Functions
+    // MARK: Other Functions
  
-    // Turns the meme elements into a single image which can then be shared or saved.
+    
+    // Captures the meme elements as a single image which can then be shared or saved.
     func generateMemedImage() -> UIImage {
         
-       /* Instructions were to hide the toolbar, capture the image, then show the toolbar, in order to capture the photo without the toolbar showing.
-          I took a different approach. I wanted the user to be able to see exactly what the meme will look like without the toolbar obscuring part of the view.
-          So I arranged the meme elements above the toolbar. The following code captures that view, without the toolbar.
-        */
-        
+        /*
+         Instructions were to hide the toolbar, capture the image, then show the toolbar,
+         in order to capture the photo without the toolbar showing.
+         I took a different approach. I wanted the user to be able to see exactly what the meme will look like,
+         so I arranged the meme elements above the toolbar in memeView.
+         The following code captures memeView, toolbar not included.
+         */
         let renderer = UIGraphicsImageRenderer(size: memeView.bounds.size)
         let memedImage = renderer.image { ctx in
             memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
@@ -309,10 +382,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     }
     
     
-    /* Buttons are toggled after changes to the photo or either text field.
-       If any of the elements are missing (photo or either text field) the share button is disabled.
-       If no photo exists the crop button is disabled. */
     
+    /*
+     Buttons are toggled after changes to the photo or either text field.
+     If any of the elements are missing (photo or either text field) the share button is disabled.
+     If no photo exists, the crop button is disabled.
+     */
     func toggleButtons() {
     
         if myPhoto.image == nil || topText.text == topText.placeholder || bottomText.text == bottomText.placeholder {
@@ -326,6 +401,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
             cropButton.isEnabled = true
             }
         }
+
     
 }
 

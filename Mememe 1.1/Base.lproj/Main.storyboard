@@ -16,10 +16,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="844" height="390"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
                                 <rect key="frame" x="0.0" y="324" width="844" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="750" constant="32" id="d18-VN-xnW"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="d18-VN-xnW"/>
                                 </constraints>
                                 <items>
                                     <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" width="100" id="2Tz-Io-jFb">
@@ -47,7 +47,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NIN-pG-hVB" userLabel="Meme View">
                                 <rect key="frame" x="0.0" y="47" width="844" height="277"/>
                                 <subviews>
-                                    <imageView autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zuq-Iq-6lL">
+                                    <imageView autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="zuq-Iq-6lL">
                                         <rect key="frame" x="0.0" y="0.0" width="844" height="277"/>
                                         <color key="backgroundColor" red="0.5" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
@@ -68,12 +68,12 @@
                                     <constraint firstItem="xqB-LL-GT4" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="5R0-Iw-yqW"/>
                                     <constraint firstItem="zuq-Iq-6lL" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="top" id="DBG-v2-i5R"/>
                                     <constraint firstItem="p3c-2y-adg" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="P48-dc-pOl"/>
+                                    <constraint firstAttribute="bottom" secondItem="zuq-Iq-6lL" secondAttribute="bottom" id="RNa-cE-FsX"/>
                                     <constraint firstItem="xqB-LL-GT4" firstAttribute="centerY" secondItem="zuq-Iq-6lL" secondAttribute="centerY" multiplier="9:5" id="Uy6-Oa-f4i"/>
                                     <constraint firstAttribute="trailing" secondItem="p3c-2y-adg" secondAttribute="trailing" id="gMb-jI-xqC"/>
                                     <constraint firstAttribute="trailing" secondItem="xqB-LL-GT4" secondAttribute="trailing" id="pzZ-Ny-YrD"/>
                                     <constraint firstItem="p3c-2y-adg" firstAttribute="centerY" secondItem="zuq-Iq-6lL" secondAttribute="centerY" multiplier="1:5" id="qut-h2-mV9"/>
                                     <constraint firstItem="zuq-Iq-6lL" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="tj3-M1-Yee"/>
-                                    <constraint firstAttribute="bottom" secondItem="zuq-Iq-6lL" secondAttribute="bottom" id="yBD-jT-ati"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -81,14 +81,15 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="NIN-pG-hVB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0Ai-bi-qyA"/>
-                            <constraint firstItem="NIN-pG-hVB" firstAttribute="bottom" secondItem="7Zh-9j-cT8" secondAttribute="top" id="5II-Du-yEx"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="bottom" id="4kO-rh-4d1"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="NIN-pG-hVB" secondAttribute="trailing" id="F2Q-hE-zcx"/>
                             <constraint firstItem="NIN-pG-hVB" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="WyZ-VB-Ycb"/>
                             <constraint firstItem="7Zh-9j-cT8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="YIn-iG-aKS"/>
-                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="uLM-9Q-o1j"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="e6I-Ui-Wp0"/>
                             <constraint firstItem="7Zh-9j-cT8" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="yVe-Wf-7nM"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <connections>
                         <outlet property="bottomText" destination="xqB-LL-GT4" id="wWb-dy-dPR"/>
                         <outlet property="cameraButton" destination="qu4-qS-6lP" id="UKu-lx-x4E"/>
