@@ -276,13 +276,19 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     // MARK: Image Picker functions
     
     
-    // Saves a selected image to the meme and sends it to the crop view controller to be cropped.
+    // Saves a selected image to the meme.
     func imagePickerController(_ picker:UIImagePickerController,didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        print("User selected an image")
   
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            
+            print("Image exists as a UIImage")
+            
+            self.myPhoto.image = image
             myMeme.image = image
+            toggleButtons()
             dismiss(animated: false, completion: nil)
-            presentCropViewController(image) // Give the user a chance to crop the selected photo
                 
             } else {
                 myPhoto.image = defaultImage // Should never happen.
@@ -299,15 +305,17 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     // MARK: Crop View Controller functions
     
     // Presents the crop view controller with settings allowing the user to resize the image keeping the aspect ratio of the photo view
+    
     func presentCropViewController(_ image:UIImage) {
         let cropView = CropViewController(image: image)
         cropView.delegate = self
-        cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
-        cropView.aspectRatioLockEnabled = true
+        //cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
+        // find out whether that frame can be added to the frame menue
+        cropView.aspectRatioLockEnabled = false // allow user to change the aspect ratio
         
         /*
          Selects the correct cropping frame (cropView) for the current device orientation,
-         if it already exists. Otherwise the cropping frame defaults to the entire photo.
+         if it already exists. Otherwise the cropping frame defaults to ???.
          Setting cropView based on saved frames allows the user to fine tune the crop as it was last set,
          rather than starting from scratch each time.
          */
@@ -325,11 +333,14 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             debugPrint("No stored cropping frame.")
         }
          
-        cropView.aspectRatioPickerButtonHidden = true
+        cropView.aspectRatioPickerButtonHidden = false // allow user some apect ratio choices
+        // see if you can add to this list
+        
         cropView.onDidFinishCancelled = { didFinishCancelled in
             self.myPhoto.image = image
             self.dismiss(animated:true, completion:nil)
             }
+        
         present(cropView, animated: true, completion: nil)
     }
     
@@ -371,9 +382,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
          so I arranged the meme elements above the toolbar in memeView.
          The following code captures memeView, toolbar not included.
          */
-        let renderer = UIGraphicsImageRenderer(size: memeView.bounds.size)
+        
+        let frame = myPhoto.frame
+        let renderer = UIGraphicsImageRenderer(size: frame.size)
         let memedImage = renderer.image { ctx in
-            memeView.drawHierarchy(in: memeView.bounds, afterScreenUpdates: true)
+            memeView.drawHierarchy(in: frame, afterScreenUpdates: true)
         }
         
         return memedImage
