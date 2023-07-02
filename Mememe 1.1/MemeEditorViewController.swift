@@ -9,7 +9,7 @@ import UIKit
 import TOCropViewController
 import CropViewController
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
+class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
  
     
 // MARK: IBOutlets
@@ -75,8 +75,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        topText.delegate = self
-        bottomText.delegate = self
         // Allows user to dismiss the keyboard by tapping elsewhere
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
            view.addGestureRecognizer(tapGesture)
@@ -109,7 +107,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
                 myPhoto.image = image
             }
         default:
-            print("no change")
+            debugPrint("no change")
         }
     }
     
@@ -163,11 +161,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
                 self.myMeme.memedImage = memedImage
                 
             } else {
-                print("The sharing activity was cancelled.")
+                debugPrint("The sharing activity was cancelled.")
             }
 
             if let error = activityError {
-                print(error)
+                debugPrint(error)
             }
             
             self.dismiss(animated: true, completion: nil)
@@ -324,7 +322,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
                 cropView.imageCropFrame = rect
             }
         default:
-            print("No stored cropping frame.")
+            debugPrint("No stored cropping frame.")
         }
          
         cropView.aspectRatioPickerButtonHidden = true
@@ -353,7 +351,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UITextF
             myMeme.croppedImageLandscape = image
             myMeme.cropFrameLandscape = cropRect
         default:
-            print("No image stored.")
+            debugPrint("No image stored.")
         }
         
         self.dismiss(animated: true, completion: nil)
