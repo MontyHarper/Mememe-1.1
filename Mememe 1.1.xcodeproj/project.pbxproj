@@ -64,13 +64,10 @@
 			children = (
 				F1A9EDDB2A3DE9A400E11C18 /* AppDelegate.swift */,
 				F1A9EDDD2A3DE9A400E11C18 /* SceneDelegate.swift */,
-<<<<<<< Updated upstream
-				F1A9EDDF2A3DE9A400E11C18 /* ViewController.swift */,
-				F1A9EDEF2A3DEA8800E11C18 /* Model.swift */,
-=======
+
 				F1A9EDDF2A3DE9A400E11C18 /* MemeEditorViewController.swift */,
 				F1A9EDEF2A3DEA8800E11C18 /* Meme.swift */,
->>>>>>> Stashed changes
+
 				F1A9EDE12A3DE9A400E11C18 /* Main.storyboard */,
 				F1A9EDE42A3DE9A600E11C18 /* Assets.xcassets */,
 				F1A9EDE62A3DE9A600E11C18 /* LaunchScreen.storyboard */,
@@ -160,11 +157,9 @@
 				F1A9EDE02A3DE9A400E11C18 /* MemeEditorViewController.swift in Sources */,
 				F1A9EDDC2A3DE9A400E11C18 /* AppDelegate.swift in Sources */,
 				F1A9EDDE2A3DE9A400E11C18 /* SceneDelegate.swift in Sources */,
-<<<<<<< Updated upstream
-				F1A9EDF02A3DEA8800E11C18 /* Model.swift in Sources */,
-=======
+
 				F1A9EDF02A3DEA8800E11C18 /* Meme.swift in Sources */,
->>>>>>> Stashed changes
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
