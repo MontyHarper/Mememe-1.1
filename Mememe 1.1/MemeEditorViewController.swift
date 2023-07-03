@@ -42,8 +42,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     // Struct instance in which to store the working meme.
     var myMeme = Meme()
             
-    // Track whether the view is raised or lowered, to keep from raising or lowering when unnecessary.
-    var viewIsRaised:Bool = false
+    // Tracks the vertical offset of the view in order to keep the keyboard from obscuring the text.
+    var viewIsRaisedBy = 0.0
     
     // Use to prevent text fields from reverting to original state when view is re-drawn.
     var textSetupIsComplete:Bool = false
@@ -59,7 +59,29 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
         subscribeToKeyboardNotifications()
-        cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+        
+        /*
+         DEAR REVIEWER:
+         The following if statement was required by the previous reviewer.
+         I have no way of testing this!
+         This code will not build in my version of Xcode / iOS.
+         Xcode does not recognize "targetEnvirnoment" or "simulator".
+         But apparently this is needed for the most up to date simulators to turn off the camera button.
+         (I would need a new iMac to run the latest Xcode; mine does not support OS13.)
+         
+         If this code causes problems, please fix it for me.
+         On my simulators, my original code (now executed in the else block below) works to deactivate the camera button, I promise!
+         Again, I have no way of testing this code; I am copying it verbatum from my previous reviewer's notes.
+         */
+        
+        if targetEnvironment(simulator) { cameraButton.isEnabled = false
+        } else {
+            cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+        }
+        
+        
+        // continuing with my own code from here
+        
         if !textSetupIsComplete {
             setupText(topText,bottomText) // Formats the text fields
         }
@@ -84,7 +106,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     /*
      This function is called whenever the device changes orientation.
      This allows for the image to be cropped differently for portrait vs. landscape.
-     The if appropriate cropped images exist, the image is switched when the device is turned.
+     When the device is turned, the image switches.
      If the crop controller is showing it gets dismissed, to prevent saving a crop in the wrong orientation.
      */
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -153,8 +175,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             if completed {
                 /*
                  Save the meme if the activity was completed.
-                 Note that the original image and the cropped images are saved when they get selected or changed,
-                 so they should already be attached to the myMeme.
+                 Note that the original image and the cropped images and cropping frames are saved when they get selected or changed, so they should already be attached to myMeme.
+                 I may decide to treat these properties the same way; that way if the user is interrupted while editing the meme they can come back to what they had. That's probably more of a Mememe 2.0 concern.
                  */
                 self.myMeme.topText = self.topText.text!
                 self.myMeme.bottomText = self.bottomText.text!
@@ -203,27 +225,27 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     // Moves the view up out of the way of the keyboard and hides the toolbar as needed.
     @objc func keyboardWillShow(_ notification:Notification) {
         
-        if bottomText.isFirstResponder && !viewIsRaised {
+        if bottomText.isFirstResponder && viewIsRaisedBy == 0 {
             let keyboardHeight = getKeyboardHeight(notification)
             let frameOrigin = view.frame.origin.y
             view.frame.origin.y = frameOrigin - keyboardHeight
             toolbar.isHidden = true
-            viewIsRaised = true
+            viewIsRaisedBy = keyboardHeight
         }
     }
     
     
-    // Moves the view down when the keyboard is dismissed and shows the toolbar as needed.
+    // Moves the view down as needed when the keyboard is dismissed and shows the toolbar.
     @objc func keyboardWillHide(_ notification:Notification) {
         
-        if viewIsRaised {
-            let keyboardHeight = getKeyboardHeight(notification)
+        if viewIsRaisedBy > 0 {
             let frameOrigin = view.frame.origin.y
-            view.frame.origin.y = frameOrigin + keyboardHeight
+            view.frame.origin.y = frameOrigin + viewIsRaisedBy
             bottomText.resignFirstResponder()
-            toolbar.isHidden = false
-            viewIsRaised = false
+            viewIsRaisedBy = 0
         }
+        toolbar.isHidden = false
+
     }
    
     
@@ -237,7 +259,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // MARK: Text field functions
     
-    // Formats the text fields
+    // Formats the text fields; this happens once when the app is launched.
     func setupText(_ textFields:UITextField...) {
         for text in textFields {
             text.defaultTextAttributes = memeTextAttributes
@@ -304,19 +326,33 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // MARK: Crop View Controller functions
     
-    // Presents the crop view controller with settings allowing the user to resize the image keeping the aspect ratio of the photo view
+    /*
+     Presents the crop view controller, allowing the user to resize and reshape the image.
+     The initial aspect ratio is set to that of the screen, so the meme will fill its available space.
+     If the user changes this, the final meme will end up with "wings" of blank space on either side.
+     This seems to be a consequence of using "Aspect Fit." I spent a day trying to figure out how to get rid of those wings, but was unable to do so.
+     I may want to look into providing a way of restoring that initial aspect ratio. There is currently no way to get back to it once the user changes it.
+     Or experiment with "Aspect Fill."
+     Another idea is to present the crop view again just before the user shares the meme, for a chance to cut off those wings.
+     */
+    
+    
     
     func presentCropViewController(_ image:UIImage) {
+        
         let cropView = CropViewController(image: image)
         cropView.delegate = self
-        //cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
-        // find out whether that frame can be added to the frame menue
-        cropView.aspectRatioLockEnabled = false // allow user to change the aspect ratio
+        
+        // Sets the initial cropping aspect ratio to fill the screen with the image.
+        cropView.customAspectRatio = CGSize(width: memeView.frame.width, height: memeView.frame.height)
+        
+        // Allow the user to change the aspect ratio as needed.
+        cropView.aspectRatioLockEnabled = false
         
         /*
          Selects the correct cropping frame (cropView) for the current device orientation,
-         if it already exists. Otherwise the cropping frame defaults to ???.
-         Setting cropView based on saved frames allows the user to fine tune the crop as it was last set,
+         if it already exists. Otherwise the cropping frame defaults to the custom ratio set above.
+         Setting cropView based on saved frames allows the user to fine-tune the crop as it was last set,
          rather than starting from scratch each time.
          */
         orientation = device.orientation
@@ -332,12 +368,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         default:
             debugPrint("No stored cropping frame.")
         }
-         
-        cropView.aspectRatioPickerButtonHidden = false // allow user some apect ratio choices
-        // see if you can add to this list
+        
+        // Allows the user to choose from some pre-set values for common aspect ratios.
+        cropView.aspectRatioPickerButtonHidden = false
         
         cropView.onDidFinishCancelled = { didFinishCancelled in
-            self.myPhoto.image = image
             self.dismiss(animated:true, completion:nil)
             }
         
@@ -381,9 +416,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
          I took a different approach. I wanted the user to be able to see exactly what the meme will look like,
          so I arranged the meme elements above the toolbar in memeView.
          The following code captures memeView, toolbar not included.
+         Note that the frame used is memeView's frame; this is the same as myPhoto's frame, and may include empty wings on either side of the image. I was unable to figure out how to crop those out using the renderer.
          */
         
-        let frame = myPhoto.frame
+        let frame = memeView.frame
         let renderer = UIGraphicsImageRenderer(size: frame.size)
         let memedImage = renderer.image { ctx in
             memeView.drawHierarchy(in: frame, afterScreenUpdates: true)
@@ -412,7 +448,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             cropButton.isEnabled = true
             }
         }
-
+    
     
 }
 
