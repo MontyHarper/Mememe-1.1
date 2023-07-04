@@ -183,6 +183,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
                 self.myMeme.bottomText = self.bottomText.text!
                 self.myMeme.memedImage = memedImage
                 
+                let object = UIApplication.shared.delegate
+                let appDelegate = object as! AppDelegate
+                appDelegate.memes.append(self.myMeme)
+                
+                
             } else {
                 debugPrint("The sharing activity was cancelled.")
             }
