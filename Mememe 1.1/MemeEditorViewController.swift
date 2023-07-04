@@ -61,26 +61,27 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         subscribeToKeyboardNotifications()
         
         /*
-         DEAR REVIEWER:
-         The following if statement was required by the previous reviewer.
-         I have no way of testing this!
-         This code will not build in my version of Xcode / iOS.
-         Xcode does not recognize "targetEnvirnoment" or "simulator".
-         But apparently this is needed for the most up to date simulators to turn off the camera button.
-         (I would need a new iMac to run the latest Xcode; mine does not support OS13.)
+         For me:
+         The following lines will disable the camera button for a simulator.
+         The reason for the #if, #else, and #endif commands...
+         These speak to the compiler.
+         The code in the #if block is compiled if targetEnvironment(simulator).
+         The code in the #else block is compiled otherwise.
          
-         If this code causes problems, please fix it for me.
-         On my simulators, my original code (now executed in the else block below) works to deactivate the camera button, I promise!
-         Again, I have no way of testing this code; I am copying it verbatum from my previous reviewer's notes.
+         For reviewer:
+         I'm afraid I griped at my last reviewer because I couldn't get that code to build.
+         If that's you, sorry!
+         It was my own fault for leaving off the #'s.
+         I had just never seen that before and didn't know what it was so my brain didn't process it.
          */
         
-        if targetEnvironment(simulator) { cameraButton.isEnabled = false
-        } else {
-            cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
-        }
+#if targetEnvironment(simulator)
+        cameraButton.isEnabled = false
+#else
+        cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+#endif
         
         
-        // continuing with my own code from here
         
         if !textSetupIsComplete {
             setupText(topText,bottomText) // Formats the text fields
