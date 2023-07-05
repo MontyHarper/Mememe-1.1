@@ -81,7 +81,7 @@
                     <navigationItem key="navigationItem" title="Saved Memes" id="keU-cR-yag" userLabel="Saved Memes">
                         <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="fPu-Sy-Vo5">
                             <connections>
-                                <action selector="newMeme" destination="Prr-oc-7xc" id="pcg-qN-hXK"/>
+                                <segue destination="mPc-ID-jhe" kind="presentation" modalPresentationStyle="fullScreen" id="whg-cT-JEW"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -122,7 +122,7 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MemeCollectionCell" id="bT8-yY-3HW" customClass="MemesCollectionViewCell" customModule="Mememe_1_1" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MemesCollectionViewCell" id="bT8-yY-3HW" customClass="MemesCollectionViewCell" customModule="Mememe_1_1" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="124" height="131"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="LNf-s7-eZj">
@@ -150,7 +150,8 @@
                     <navigationItem key="navigationItem" title="Saved Memes" id="PO9-xS-3p8">
                         <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="iPY-ZW-Chr">
                             <connections>
-                                <action selector="newMeme" destination="se7-CA-MEN" id="VXm-PY-Gnv"/>
+                                <action selector="showMemeEditorViewController" destination="se7-CA-MEN" id="IQ6-e2-V6a"/>
+                                <segue destination="mPc-ID-jhe" kind="presentation" modalPresentationStyle="fullScreen" id="PNd-ts-fE2"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -162,10 +163,26 @@
             </objects>
             <point key="canvasLocation" x="-6195.3846153846152" y="-328.43601895734594"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="EgO-ej-Kdn">
+            <objects>
+                <navigationController navigationBarHidden="YES" id="mPc-ID-jhe" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="d94-bS-hGc"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="0Zz-fS-bua">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="Vp0-Hc-dXl"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oYx-w7-rdg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-5111" y="-40"/>
+        </scene>
         <!--MemeEditorViewController-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" userLabel="MemeEditorViewController" customClass="MemeEditorViewController" customModule="Mememe_1_1" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="editorVC" id="BYZ-38-t0r" userLabel="MemeEditorViewController" customClass="MemeEditorViewController" customModule="Mememe_1_1" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -173,22 +190,27 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
                                 <rect key="frame" x="0.0" y="766" width="390" height="44"/>
                                 <items>
-                                    <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" width="100" id="2Tz-Io-jFb">
+                                    <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" width="75" id="2Tz-Io-jFb">
                                         <connections>
                                             <action selector="selectPhoto:" destination="BYZ-38-t0r" id="qW8-Xk-NpZ"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem tag="1" title="Camera" image="camera" catalog="system" width="100" id="qu4-qS-6lP">
+                                    <barButtonItem tag="1" title="Camera" image="camera" catalog="system" width="75" id="qu4-qS-6lP">
                                         <connections>
                                             <action selector="selectPhoto:" destination="BYZ-38-t0r" id="GBK-tY-LP1"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Crop" image="crop.rotate" catalog="system" width="100" id="psv-P5-j2f">
+                                    <barButtonItem title="Crop" image="crop.rotate" catalog="system" width="75" id="psv-P5-j2f">
                                         <connections>
                                             <action selector="crop" destination="BYZ-38-t0r" id="90a-dT-Jas"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" width="100" id="SC2-gN-vOK">
+                                    <barButtonItem image="square.grid.3x3.fill" catalog="system" width="75" id="Qdv-C6-qPx" userLabel="Save Button">
+                                        <connections>
+                                            <action selector="saveMeme" destination="BYZ-38-t0r" id="5oA-vV-VZz"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" width="75" id="SC2-gN-vOK">
                                         <connections>
                                             <action selector="share:" destination="BYZ-38-t0r" id="VK4-fM-ADf"/>
                                         </connections>
@@ -247,6 +269,7 @@
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" id="lIx-69-6TY"/>
                     <connections>
                         <outlet property="bottomText" destination="xqB-LL-GT4" id="Jij-a0-i1Y"/>
                         <outlet property="cameraButton" destination="qu4-qS-6lP" id="ldf-HL-5LA"/>
@@ -260,9 +283,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5318" y="1"/>
+            <point key="canvasLocation" x="-4308" y="-40"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="PNd-ts-fE2"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="camera" catalog="system" width="128" height="93"/>
         <image name="crop.rotate" catalog="system" width="113" height="128"/>

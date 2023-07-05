@@ -14,9 +14,6 @@ class SavedMemesCollectionViewController: UICollectionViewController {
     
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
-    @IBAction func newMeme() {
-        
-    }
     
     // MARK: Properties
     
@@ -38,13 +35,27 @@ class SavedMemesCollectionViewController: UICollectionViewController {
         flowLayout.minimumInteritemSpacing = space
         flowLayout.minimumLineSpacing = space
         flowLayout.itemSize = CGSize(width: dimension, height: dimension)
+        
+        debugPrint("View did load. These are the memes: \(memes as Any)")
     }
+    
+
+    
     
     // MARK: Collection View Controller Functions
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        debugPrint(memes.count)
         return memes.count
+
     }
     
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let meme = memes[indexPath.row]
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MemesCollectionViewCell", for: indexPath) as! MemesCollectionViewCell
+        cell.imageView?.image = meme.memedImage
+        return cell
+    }
     
 }

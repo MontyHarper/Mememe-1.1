@@ -13,9 +13,7 @@ class SavedMemesTableViewController: UITableViewController {
 
     // MARK: IBActions
     
-    @IBAction func newMeme() {
-        
-    }
+
     
     // MARK: Properties
     

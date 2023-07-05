@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F17A31B92A5502CF00E92C8E /* MemeKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17A31B82A5502CF00E92C8E /* MemeKit.swift */; };
 		F198990A2A5324830050FA25 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F19899092A5324830050FA25 /* README.md */; };
 		F198990C2A53ADAE0050FA25 /* SavedMemesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F198990B2A53ADAE0050FA25 /* SavedMemesTableViewController.swift */; };
 		F198990E2A53ADCC0050FA25 /* SavedMemesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F198990D2A53ADCB0050FA25 /* SavedMemesCollectionViewController.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F17A31B82A5502CF00E92C8E /* MemeKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemeKit.swift; sourceTree = "<group>"; };
 		F19899092A5324830050FA25 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		F198990B2A53ADAE0050FA25 /* SavedMemesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMemesTableViewController.swift; sourceTree = "<group>"; };
 		F198990D2A53ADCB0050FA25 /* SavedMemesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMemesCollectionViewController.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 			children = (
 				F1A9EDDB2A3DE9A400E11C18 /* AppDelegate.swift */,
 				F1A9EDDD2A3DE9A400E11C18 /* SceneDelegate.swift */,
+				F17A31B82A5502CF00E92C8E /* MemeKit.swift */,
 				F1A9EDDF2A3DE9A400E11C18 /* MemeEditorViewController.swift */,
 				F198990B2A53ADAE0050FA25 /* SavedMemesTableViewController.swift */,
 				F198990D2A53ADCB0050FA25 /* SavedMemesCollectionViewController.swift */,
@@ -169,6 +172,7 @@
 				F1A9EDE02A3DE9A400E11C18 /* MemeEditorViewController.swift in Sources */,
 				F1A9EDDC2A3DE9A400E11C18 /* AppDelegate.swift in Sources */,
 				F198990E2A53ADCC0050FA25 /* SavedMemesCollectionViewController.swift in Sources */,
+				F17A31B92A5502CF00E92C8E /* MemeKit.swift in Sources */,
 				F1A9EDDE2A3DE9A400E11C18 /* SceneDelegate.swift in Sources */,
 				F198990C2A53ADAE0050FA25 /* SavedMemesTableViewController.swift in Sources */,
 				F1A9EDF02A3DEA8800E11C18 /* Meme.swift in Sources */,

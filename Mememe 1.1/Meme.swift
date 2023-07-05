@@ -21,6 +21,7 @@ struct Meme {
     var cropFrameLandscape: CGRect?
     var cropFramePortrait: CGRect?
     var memedImage: UIImage?
+    var id: Int?
     
 }
 

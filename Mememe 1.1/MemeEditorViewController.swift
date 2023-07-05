@@ -24,7 +24,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var memeView: UIView!
 
 
-    
+
    
 // MARK: Properties
     
@@ -40,7 +40,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     ]
     
     // Struct instance in which to store the working meme.
+    
     var myMeme = Meme()
+    var myMemeID = Int()
+
             
     // Tracks the vertical offset of the view in order to keep the keyboard from obscuring the text.
     var viewIsRaisedBy = 0.0
@@ -80,7 +83,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
 #else
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
 #endif
-        
         
         
         if !textSetupIsComplete {
@@ -164,6 +166,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     
     @IBAction func share(_ sender: Any) {
+      
+    // should call save, then share
         
       let memedImage = generateMemedImage()
       let activityController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
@@ -206,6 +210,12 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     }
     
     
+    @IBAction func saveMeme() {
+        
+        saveMyMeme()
+        self.dismiss(animated: true)
+        
+    }
     
     // Called by tapping outside of keyboard
     @objc func dismissKeyboard() {
@@ -434,6 +444,40 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         return memedImage
     }
     
+    func saveMyMeme() {
+      
+        // Capture the memed image
+        let memedImage = generateMemedImage()
+        
+        /*
+         Set the myMeme properties that haven't been set yet.
+         Note that image properties and cropping properties are not included here.
+         Those get set and reset whenever images are selected or cropped by the user.
+         */
+        myMeme.topText = topText.text!
+        myMeme.bottomText = bottomText.text!
+        myMeme.memedImage = memedImage
+        
+        // This allows access to the meme array for storage.
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
+        /*
+         If myMeme is an update of an existing meme, replace the old meme with the new information.
+         Otherwise, give myMeme an ID number for future reference and save it at the end of the array.
+         */
+        if let id = myMeme.id {
+            appDelegate.memes.replaceSubrange(id...id, with:[myMeme])
+        } else {
+            myMeme.id = appDelegate.memes.count
+            appDelegate.memes.append(myMeme)
+        }
+    }
+    
+    
+    func shareMeme(_ meme:Meme) {
+        // this might go onto a helper page that we import
+        // tht way it can be accessed from the edit or the details view
+    }
     
     
     /*
