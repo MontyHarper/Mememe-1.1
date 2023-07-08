@@ -16,39 +16,22 @@ class DetailViewController:UIViewController {
     
     var myMeme = Meme()
     
+
+    
     
     // MARK: IBOutlets
     
     @IBOutlet weak var memeView:UIImageView!
-    
-    
+    @IBOutlet weak var shareButton:UIBarButtonItem!
    
     // MARK: Lifecycle Functions
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if !myMeme.isSharable {
-/*            let editor = storyboard?.instantiateViewController(withIdentifier: "EditorView") as! MemeEditorViewController
-            editor.myMeme = myMeme
-            editor.modalPresentationStyle = .fullScreen
-            navigationController?.present(editor, animated: true)
-*/
-            debugPrint("I'm getting ready to call a segue.")
-            performSegue(withIdentifier: "EditorView", sender: self)
-            
-        } else {
-            memeView.image = myMeme.memedImage
+        memeView.image = myMeme.memedImage
         }
-    }
-        
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        debugPrint("I'm in the prepare for segue function.")
-        if segue.identifier == "EditView" {
-            let editor = segue.destination as! MemeEditorViewController
-            editor.myMeme = myMeme
-        }
-    }
+    
         
     // MARK: IBActions
         
@@ -56,12 +39,23 @@ class DetailViewController:UIViewController {
     @IBAction func edit() {
         let editor = storyboard?.instantiateViewController(withIdentifier: "EditorView") as! MemeEditorViewController
         editor.myMeme = myMeme
-        editor.modalPresentationStyle = .fullScreen
-        present(editor, animated: false)
+        editor.hidesBottomBarWhenPushed = true
+        editor.delegate = self
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        navigationController?.pushViewController(editor, animated: true)
     }
     
     @IBAction func share() {
-        
+        print("Sharing meme")
+    }
+    
+    @IBAction func delete() {
+        print("deleting meme")
+    }
+    
+    func updateMeme (_ newMeme:Meme) {
+        myMeme = newMeme
+        memeView.image = myMeme.memedImage
     }
     
 }

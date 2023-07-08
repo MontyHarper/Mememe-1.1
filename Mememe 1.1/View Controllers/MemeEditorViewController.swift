@@ -17,6 +17,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var myPhoto: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var cropButton: UIBarButtonItem!
+    @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var topText: UITextField!
     @IBOutlet weak var bottomText: UITextField!
@@ -41,8 +42,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // Struct instance in which to store the working meme.
     
-    var myMeme = Meme()
-    var myMemeID = Int()
+    var myMeme:Meme!
+    var myMemeID:Int!
 
             
     // Tracks the vertical offset of the view in order to keep the keyboard from obscuring the text.
@@ -52,16 +53,23 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     var textSetupIsComplete:Bool = false
     
     // Use to determine current orientation and crop accordingly. Orientation will be re-set when needed.
+    
+    enum Layout {
+        case vertical, horizontal
+    }
+    
     let device = UIDevice.current
-    var orientation: UIDeviceOrientation = .portrait
+    var layoutStyle: Layout = .vertical
 
+    weak var delegate:DetailViewController?
+
+    
     
 // MARK: Lifecycle Methods
     
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
-        
         subscribeToKeyboardNotifications()
         
     }
@@ -101,6 +109,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
 #endif
         
+        topText.text = myMeme.topText
+        bottomText.text = myMeme.bottomText
+        resetLayoutStyle()
+        loadImage()
+        
         if !textSetupIsComplete {
             setupText(topText,bottomText) // Formats the text fields
         }
@@ -126,19 +139,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             }
         }
         
-        orientation = device.orientation
-        switch orientation {
-        case .portrait, .portraitUpsideDown:
-            if let image = myMeme.croppedImagePortrait {
-                myPhoto.image = image
-            }
-        case .landscapeLeft, .landscapeRight:
-            if let image = myMeme.croppedImageLandscape {
-                myPhoto.image = image
-            }
-        default:
-            debugPrint("no change")
-        }
+       loadImage()
     }
     
     
@@ -218,8 +219,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBAction func saveMeme() {
         
         saveMyMeme()
-        self.dismiss(animated: true)
-        
+        delegate?.updateMeme(myMeme)
+        delegate?.hidesBottomBarWhenPushed = false
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.popViewController(animated: true)
     }
     
     // Called by tapping outside of keyboard
@@ -282,12 +285,12 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // Formats the text fields; this happens once when the app is launched.
     func setupText(_ textFields:UITextField...) {
-        for text in textFields {
-            text.defaultTextAttributes = memeTextAttributes
-            text.textAlignment = .center
-            text.autocapitalizationType = .allCharacters
-            // placeholder text is set in storyboard, stored here & used to replace an empty text field
-            text.placeholder = text.text
+        for field in textFields {
+            field.defaultTextAttributes = memeTextAttributes
+            field.textAlignment = .center
+            field.autocapitalizationType = .allCharacters
+            // placeholder text is initially set in storyboard, stored here & used to replace an empty text field
+            field.placeholder = field.text
             }
         textSetupIsComplete = true
     }
@@ -376,18 +379,17 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
          Setting cropView based on saved frames allows the user to fine-tune the crop as it was last set,
          rather than starting from scratch each time.
          */
-        orientation = device.orientation
-        switch orientation {
-        case .portrait, .portraitUpsideDown:
+        
+        
+        switch layoutStyle {
+        case .vertical:
             if let rect = myMeme.cropFramePortrait {
                 cropView.imageCropFrame = rect
             }
-        case .landscapeLeft, .landscapeRight:
+        case .horizontal:
             if let rect = myMeme.cropFrameLandscape {
                 cropView.imageCropFrame = rect
             }
-        default:
-            debugPrint("No stored cropping frame.")
         }
         
         // Allows the user to choose from some pre-set values for common aspect ratios.
@@ -410,15 +412,14 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
          according to the orientation from when the controller was presented. This should not have changed,
          or the controller would have been dismissed by viewWillTransition.
          */
-        switch orientation {
-        case .portrait, .portraitUpsideDown:
+        
+        switch layoutStyle {
+        case .vertical:
             myMeme.croppedImagePortrait = image
             myMeme.cropFramePortrait = cropRect
-        case .landscapeLeft, .landscapeRight:
+        case .horizontal:
             myMeme.croppedImageLandscape = image
             myMeme.cropFrameLandscape = cropRect
-        default:
-            debugPrint("No image stored.")
         }
         
         self.dismiss(animated: true, completion: nil)
@@ -461,6 +462,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         myMeme.topText = topText.text!
         myMeme.bottomText = bottomText.text!
         myMeme.memedImage = memedImage
+        myMeme.isEmpty = false
         
         // This allows access to the meme array for storage.
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -492,17 +494,50 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     func toggleButtons() {
     
         if myPhoto.image == nil || topText.text == topText.placeholder || bottomText.text == bottomText.placeholder {
-            shareButton.isEnabled = false
+            myMeme.isSharable = false
         } else {
-            shareButton.isEnabled = true
+            myMeme.isSharable = true
         }
+        
         if myPhoto.image == nil {
             cropButton.isEnabled = false
         } else {
             cropButton.isEnabled = true
             }
+        
+        shareButton.isEnabled = myMeme.isSharable
+        
         }
     
+    func loadImage() {
+        
+        switch layoutStyle {
+        case .vertical:
+            if let image = myMeme.croppedImagePortrait {
+                myPhoto.image = image
+            }
+        case .horizontal:
+            if let image = myMeme.croppedImageLandscape {
+                myPhoto.image = image
+            }
+        }
+    }
     
+    
+    func resetLayoutStyle() {
+        
+        let orientation = device.orientation
+        
+        switch orientation {
+        case .portrait, .portraitUpsideDown:
+            layoutStyle = .vertical
+        case .landscapeLeft, .landscapeRight:
+            layoutStyle = .horizontal
+        default:
+            debugPrint("no change")
+            // layout style will not change unless the device is turned to vertical or horizontal position.
+        }
+        
+    }
 }
 

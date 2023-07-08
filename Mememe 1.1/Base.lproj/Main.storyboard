@@ -79,11 +79,7 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Item" id="i2j-XR-3gb"/>
                     <navigationItem key="navigationItem" title="Saved Memes" id="keU-cR-yag" userLabel="Saved Memes">
-                        <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="fPu-Sy-Vo5">
-                            <connections>
-                                <segue destination="BYZ-38-t0r" kind="presentation" identifier="NewMemeList" modalPresentationStyle="fullScreen" id="VWO-yV-3ah"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="fPu-Sy-Vo5"/>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S1u-gK-Ha6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -143,7 +139,6 @@
                                 <size key="customSize" width="124" height="131"/>
                                 <connections>
                                     <outlet property="imageView" destination="JdC-I4-ZqS" id="Mmp-JG-TCE"/>
-                                    <segue destination="jhn-NU-xfC" kind="presentation" identifier="CollectionDetailView" modalPresentationStyle="fullScreen" id="fyZ-hy-h8W"/>
                                 </connections>
                             </collectionViewCell>
                         </cells>
@@ -157,7 +152,6 @@
                         <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="iPY-ZW-Chr">
                             <connections>
                                 <action selector="showMemeEditorViewController" destination="se7-CA-MEN" id="IQ6-e2-V6a"/>
-                                <segue destination="BYZ-38-t0r" kind="presentation" identifier="NewMemeCollection" modalPresentationStyle="fullScreen" id="Hit-RH-bA9"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -177,30 +171,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
-                                <rect key="frame" x="0.0" y="766" width="390" height="44"/>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleAspectFit" verticalCompressionResistancePriority="1000" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Zh-9j-cT8">
+                                <rect key="frame" x="0.0" y="761" width="390" height="49"/>
                                 <items>
-                                    <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" width="75" id="2Tz-Io-jFb">
+                                    <barButtonItem title="Photos" image="photo.on.rectangle.angled" catalog="system" id="2Tz-Io-jFb">
                                         <connections>
                                             <action selector="selectPhoto:" destination="BYZ-38-t0r" id="qW8-Xk-NpZ"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem tag="1" title="Camera" image="camera" catalog="system" width="75" id="qu4-qS-6lP">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="EuM-7s-ylV"/>
+                                    <barButtonItem tag="1" title="Camera" image="camera" catalog="system" id="qu4-qS-6lP">
                                         <connections>
                                             <action selector="selectPhoto:" destination="BYZ-38-t0r" id="GBK-tY-LP1"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Crop" image="crop.rotate" catalog="system" width="75" id="psv-P5-j2f">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="VJt-9G-7aY"/>
+                                    <barButtonItem title="Crop" image="crop.rotate" catalog="system" id="psv-P5-j2f">
                                         <connections>
                                             <action selector="crop" destination="BYZ-38-t0r" id="90a-dT-Jas"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem image="square.grid.3x3.fill" catalog="system" width="75" id="Qdv-C6-qPx" userLabel="Save Button">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="lS3-ih-Mea"/>
+                                    <barButtonItem title="Save" image="folder" catalog="system" id="Qdv-C6-qPx" userLabel="Save Button">
                                         <connections>
-                                            <action selector="saveMeme" destination="BYZ-38-t0r" id="5oA-vV-VZz"/>
+                                            <action selector="saveMeme" destination="BYZ-38-t0r" id="951-rJ-z0B"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" width="75" id="SC2-gN-vOK">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Ym7-dT-a1z"/>
+                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" id="SC2-gN-vOK">
                                         <connections>
                                             <action selector="share:" destination="BYZ-38-t0r" id="VK4-fM-ADf"/>
                                         </connections>
@@ -208,23 +206,39 @@
                                 </items>
                             </toolbar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NIN-pG-hVB" userLabel="Meme View">
-                                <rect key="frame" x="0.0" y="47" width="390" height="719"/>
+                                <rect key="frame" x="0.0" y="47" width="390" height="714"/>
                                 <subviews>
                                     <imageView autoresizesSubviews="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="zuq-Iq-6lL">
-                                        <rect key="frame" x="0.0" y="0.0" width="390" height="719"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="390" height="714"/>
                                         <color key="backgroundColor" red="0.5" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="TOP TEXT" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="p3c-2y-adg">
-                                        <rect key="frame" x="0.0" y="62.333333333333329" width="390" height="19"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="center" contentVerticalAlignment="center" usesAttributedText="YES" allowsEditingTextAttributes="YES" placeholder="TOP TEXT" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="p3c-2y-adg">
+                                        <rect key="frame" x="0.0" y="59.666666666666664" width="390" height="18.666666666666664"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="TOP TEXT">
+                                                <attributes>
+                                                    <color key="NSColor" systemColor="labelColor"/>
+                                                    <font key="NSFont" metaFont="system" size="14"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                                         <connections>
                                             <outlet property="delegate" destination="BYZ-38-t0r" id="Uye-2c-zBx"/>
                                         </connections>
                                     </textField>
-                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="BOTTOM TEXT" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xqB-LL-GT4">
-                                        <rect key="frame" x="0.0" y="637.66666666666663" width="390" height="18.666666666666629"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="center" contentVerticalAlignment="center" usesAttributedText="YES" allowsEditingTextAttributes="YES" placeholder="BOTTOM TEXT" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xqB-LL-GT4">
+                                        <rect key="frame" x="0.0" y="636" width="390" height="18.666666666666629"/>
+                                        <attributedString key="attributedText">
+                                            <fragment content="BOTTOM TEXT">
+                                                <attributes>
+                                                    <color key="NSColor" systemColor="labelColor"/>
+                                                    <font key="NSFont" metaFont="system" size="14"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                </attributes>
+                                            </fragment>
+                                        </attributedString>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters"/>
                                         <connections>
                                             <outlet property="delegate" destination="BYZ-38-t0r" id="jqh-1t-Hwz"/>
@@ -233,29 +247,29 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="zuq-Iq-6lL" secondAttribute="trailing" id="1R4-J8-kJQ"/>
-                                    <constraint firstItem="xqB-LL-GT4" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="5R0-Iw-yqW"/>
-                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="top" id="DBG-v2-i5R"/>
-                                    <constraint firstItem="p3c-2y-adg" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="P48-dc-pOl"/>
-                                    <constraint firstAttribute="bottom" secondItem="zuq-Iq-6lL" secondAttribute="bottom" id="RNa-cE-FsX"/>
-                                    <constraint firstItem="xqB-LL-GT4" firstAttribute="centerY" secondItem="zuq-Iq-6lL" secondAttribute="centerY" multiplier="9:5" id="Uy6-Oa-f4i"/>
-                                    <constraint firstAttribute="trailing" secondItem="p3c-2y-adg" secondAttribute="trailing" id="gMb-jI-xqC"/>
-                                    <constraint firstAttribute="trailing" secondItem="xqB-LL-GT4" secondAttribute="trailing" id="pzZ-Ny-YrD"/>
-                                    <constraint firstItem="p3c-2y-adg" firstAttribute="centerY" secondItem="zuq-Iq-6lL" secondAttribute="centerY" multiplier="1:5" id="qut-h2-mV9"/>
-                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="tj3-M1-Yee"/>
+                                    <constraint firstAttribute="bottom" secondItem="zuq-Iq-6lL" secondAttribute="bottom" id="BU4-Xp-VBf"/>
+                                    <constraint firstAttribute="trailing" secondItem="p3c-2y-adg" secondAttribute="trailing" id="FMg-V2-MMz"/>
+                                    <constraint firstAttribute="trailing" secondItem="zuq-Iq-6lL" secondAttribute="trailing" id="Ljk-4b-iDo"/>
+                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="UUy-iW-Jpg"/>
+                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="centerY" secondItem="p3c-2y-adg" secondAttribute="top" multiplier="6:1" id="VgY-YP-v9J"/>
+                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="top" id="fOc-KM-OoC"/>
+                                    <constraint firstAttribute="trailing" secondItem="xqB-LL-GT4" secondAttribute="trailing" id="fyg-TR-DDn"/>
+                                    <constraint firstItem="zuq-Iq-6lL" firstAttribute="centerY" secondItem="xqB-LL-GT4" secondAttribute="bottom" multiplier="6:11" id="gvE-PG-bpS"/>
+                                    <constraint firstItem="xqB-LL-GT4" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="leq-ah-EkE"/>
+                                    <constraint firstItem="p3c-2y-adg" firstAttribute="leading" secondItem="NIN-pG-hVB" secondAttribute="leading" id="rqi-rO-ZlH"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="NIN-pG-hVB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0Ai-bi-qyA"/>
-                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="bottom" id="4kO-rh-4d1"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="NIN-pG-hVB" secondAttribute="trailing" id="F2Q-hE-zcx"/>
-                            <constraint firstItem="NIN-pG-hVB" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="WyZ-VB-Ycb"/>
-                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="YIn-iG-aKS"/>
-                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="e6I-Ui-Wp0"/>
-                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="yVe-Wf-7nM"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="top" secondItem="NIN-pG-hVB" secondAttribute="bottom" id="0wX-dJ-Kh7"/>
+                            <constraint firstItem="NIN-pG-hVB" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="6Lc-6M-U9L"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="7Gt-bC-9LX"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="NbE-0v-Z3s"/>
+                            <constraint firstItem="7Zh-9j-cT8" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="WzU-S4-8N8"/>
+                            <constraint firstItem="NIN-pG-hVB" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="bYE-w5-pao"/>
+                            <constraint firstItem="NIN-pG-hVB" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="lbB-PY-HlG"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
@@ -266,14 +280,15 @@
                         <outlet property="cropButton" destination="psv-P5-j2f" id="oQO-Rd-ODR"/>
                         <outlet property="memeView" destination="NIN-pG-hVB" id="Ypr-kV-WUa"/>
                         <outlet property="myPhoto" destination="zuq-Iq-6lL" id="rkK-dq-Zi6"/>
-                        <outlet property="shareButton" destination="SC2-gN-vOK" id="tPz-yw-lH1"/>
+                        <outlet property="saveButton" destination="Qdv-C6-qPx" id="bYI-dV-GHG"/>
+                        <outlet property="shareButton" destination="SC2-gN-vOK" id="gG0-AF-TTP"/>
                         <outlet property="toolbar" destination="7Zh-9j-cT8" id="UAv-8m-plk"/>
                         <outlet property="topText" destination="p3c-2y-adg" id="I32-U0-hal"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3618" y="1"/>
+            <point key="canvasLocation" x="-4152" y="1"/>
         </scene>
         <!--DetailView-->
         <scene sceneID="jMX-pS-k4a">
@@ -284,18 +299,30 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zku-vs-qVW">
-                                <rect key="frame" x="0.0" y="47" width="390" height="719"/>
+                                <rect key="frame" x="0.0" y="47" width="390" height="714"/>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9NU-df-nCk">
-                                <rect key="frame" x="0.0" y="766" width="390" height="44"/>
+                                <rect key="frame" x="0.0" y="761" width="390" height="49"/>
                                 <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="TqH-NL-ZPw"/>
                                     <barButtonItem title="Edit" image="square.and.pencil.circle.fill" catalog="system" id="hAY-GW-LI8">
                                         <connections>
                                             <action selector="edit" destination="jhn-NU-xfC" id="Q5o-4P-p7u"/>
-                                            <segue destination="BYZ-38-t0r" kind="presentation" identifier="EditorView" modalPresentationStyle="fullScreen" id="BwY-5V-2Ng"/>
                                         </connections>
                                     </barButtonItem>
-                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" id="FQ1-7l-IXU"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="TeC-ca-c0F"/>
+                                    <barButtonItem title="Delete" image="circle.slash" catalog="system" id="d18-r4-ktO">
+                                        <connections>
+                                            <action selector="delete" destination="jhn-NU-xfC" id="WBT-3d-4OF"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="0hT-jc-bRu"/>
+                                    <barButtonItem title="Share" image="square.and.arrow.up" catalog="system" id="FQ1-7l-IXU">
+                                        <connections>
+                                            <action selector="share" destination="jhn-NU-xfC" id="r0S-3n-yq7"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="v4h-l6-6MS"/>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -313,26 +340,29 @@
                     </view>
                     <navigationItem key="navigationItem" id="yuf-Cb-yaQ"/>
                     <connections>
-                        <outlet property="memeView" destination="zku-vs-qVW" id="P5h-bg-zJC"/>
+                        <outlet property="memeView" destination="zku-vs-qVW" id="TYu-w6-QMb"/>
+                        <outlet property="shareButton" destination="9NU-df-nCk" id="5dN-IN-vzP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wj8-kB-VQd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4782" y="-592"/>
+            <point key="canvasLocation" x="-5057" y="1"/>
         </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="Hit-RH-bA9"/>
-    </inferredMetricsTieBreakers>
     <resources>
         <image name="camera" catalog="system" width="128" height="93"/>
+        <image name="circle.slash" catalog="system" width="128" height="123"/>
         <image name="crop.rotate" catalog="system" width="113" height="128"/>
+        <image name="folder" catalog="system" width="128" height="96"/>
         <image name="list.bullet" catalog="system" width="128" height="87"/>
         <image name="photo.on.rectangle.angled" catalog="system" width="128" height="98"/>
         <image name="plus.app.fill" catalog="system" width="128" height="114"/>
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="square.and.pencil.circle.fill" catalog="system" width="128" height="123"/>
         <image name="square.grid.3x3.fill" catalog="system" width="128" height="113"/>
+        <systemColor name="labelColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

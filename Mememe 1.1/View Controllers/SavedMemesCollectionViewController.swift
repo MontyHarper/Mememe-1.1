@@ -41,23 +41,16 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         // If no memes exist yet, pass an empty meme to the detail view, which will get passed to the editor.
         if memes.count == 0 {
             
-  /*        let detailView = storyboard?.instantiateViewController(withIdentifier: "DetailView") as! DetailViewController
-            detailView.modalPresentationStyle = .fullScreen
+            let meme = Meme()
+            let detailView = storyboard?.instantiateViewController(withIdentifier: "EditorView") as! MemeEditorViewController
             detailView.myMeme = meme
-            present(detailView, animated: true)
-   */
-            performSegue(withIdentifier: "NewMemeCollection", sender: self)
+            detailView.hidesBottomBarWhenPushed = true
+            navigationController?.setNavigationBarHidden(true, animated: true)
+            navigationController?.pushViewController(detailView, animated: true)
             
         }
     }
         
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "NewMemeCollection" {
-            let meme = Meme()
-            let editor = segue.destination as! MemeEditorViewController
-            editor.myMeme = meme
-        }
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -92,8 +85,9 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         let detailView = storyboard?.instantiateViewController(withIdentifier: "DetailView") as! DetailViewController
         let selectedMeme = memes[indexPath.row]
         detailView.myMeme = selectedMeme
-        detailView.modalPresentationStyle = .fullScreen
-        present(detailView, animated: true)
+        detailView.hidesBottomBarWhenPushed = true
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.pushViewController(detailView, animated: true)
     }
     
     
