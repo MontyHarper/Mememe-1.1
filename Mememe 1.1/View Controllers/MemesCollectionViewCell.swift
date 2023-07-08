@@ -11,5 +11,6 @@ import UIKit
 class MemesCollectionViewCell:UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
+    
 
 }

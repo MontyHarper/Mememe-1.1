@@ -12,8 +12,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: properties
     
-    var memes = [Meme]()
-    
+    var memes = [Meme]()    
     
     // MARK: application
     

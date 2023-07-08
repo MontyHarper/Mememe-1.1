@@ -61,7 +61,24 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     override func viewWillAppear(_ animated:Bool) {
         super.viewWillAppear(animated)
+        
         subscribeToKeyboardNotifications()
+        
+    }
+    
+
+    override func viewWillDisappear(_ animated:Bool) {
+        super.viewWillDisappear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // Allows user to dismiss the keyboard by tapping elsewhere
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
         
         /*
          For me:
@@ -84,26 +101,14 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         cameraButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
 #endif
         
-        
         if !textSetupIsComplete {
             setupText(topText,bottomText) // Formats the text fields
         }
+        
         toggleButtons() // Activates or deactivates crop and share buttons as appropriate
+        
     }
     
-
-    override func viewWillDisappear(_ animated:Bool) {
-        super.viewWillDisappear(animated)
-        unsubscribeFromKeyboardNotifications()
-    }
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Allows user to dismiss the keyboard by tapping elsewhere
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-           view.addGestureRecognizer(tapGesture)
-    }
     
     
     /*
@@ -432,10 +437,9 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
          I took a different approach. I wanted the user to be able to see exactly what the meme will look like,
          so I arranged the meme elements above the toolbar in memeView.
          The following code captures memeView, toolbar not included.
-         Note that the frame used is memeView's frame; this is the same as myPhoto's frame, and may include empty wings on either side of the image. I was unable to figure out how to crop those out using the renderer.
          */
         
-        let frame = memeView.frame
+        let frame = myPhoto.frame
         let renderer = UIGraphicsImageRenderer(size: frame.size)
         let memedImage = renderer.image { ctx in
             memeView.drawHierarchy(in: frame, afterScreenUpdates: true)

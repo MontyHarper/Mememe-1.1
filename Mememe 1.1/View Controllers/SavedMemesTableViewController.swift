@@ -23,6 +23,13 @@ class SavedMemesTableViewController: UITableViewController {
         return appDelegate.memes
     }
     
+    // MARK: Lifecycle Functions
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return memes.count
     }
@@ -34,5 +41,6 @@ class SavedMemesTableViewController: UITableViewController {
         cell.imageView?.image = meme.memedImage
         return cell
     }
+
     
 }

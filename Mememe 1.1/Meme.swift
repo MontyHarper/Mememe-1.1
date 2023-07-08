@@ -22,6 +22,8 @@ struct Meme {
     var cropFramePortrait: CGRect?
     var memedImage: UIImage?
     var id: Int?
+    var isSharable: Bool = false
+    var isEmpty: Bool = true
     
 }
 
