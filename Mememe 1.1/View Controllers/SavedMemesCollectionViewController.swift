@@ -36,6 +36,10 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
     @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     
+    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
+    }
+    
+    
     // MARK: Lifecycle Functions
     
     override func viewDidLoad() {
@@ -45,20 +49,14 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         setFlowLayout()
         
         /*
-         If no memes exist yet to be displayed, this opens the editor to create one.
-         Note that project specifications require the app to open to a saved memes view.
-         Technically, it does, but you don't see it on screen.
-         That would make better sense if the app stored persistant data.
-         As is the app would always open to basically a blank screen.
-         I prefer to send the user straight to the editor to make a first meme.
-         As soon as I can update the app to save persistant data, it will open to the saved memes page on subsequent uses.
-         If this implementation is a problem, I can just comment out the following if statement.
+         If no memes exist yet to be displayed, show an alert letting the user know how to create one.
          */
         if memes.count == 0 {
-            let editor = storyboard?.instantiateViewController(withIdentifier: "EditorView") as! MemeEditorViewController
-            editor.hidesBottomBarWhenPushed = true
-            navigationController?.setNavigationBarHidden(true, animated: true)
-            navigationController?.pushViewController(editor, animated: true)
+            let alert = UIAlertController(title: "No Memes Yet to Show", message: "Please use the + button in the upper right hand corner to start a new meme. I could do that for you, but Udacity won't let me. 🤪", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: { _ in
+            NSLog("The \"OK\" alert occured.")
+            }))
+            self.present(alert, animated: true, completion: nil)
         }
     }
         

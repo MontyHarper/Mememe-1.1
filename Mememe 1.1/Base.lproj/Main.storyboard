@@ -82,7 +82,7 @@
                     <navigationItem key="navigationItem" title="Saved Memes" id="keU-cR-yag" userLabel="Saved Memes">
                         <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="fPu-Sy-Vo5">
                             <connections>
-                                <segue destination="jhn-NU-xfC" kind="show" id="TGe-am-u1C"/>
+                                <segue destination="BYZ-38-t0r" kind="presentation" modalPresentationStyle="fullScreen" id="481-2h-aw8"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -156,7 +156,7 @@
                     <navigationItem key="navigationItem" title="Saved Memes" id="PO9-xS-3p8">
                         <barButtonItem key="rightBarButtonItem" title="New Meme" image="plus.app.fill" catalog="system" id="iPY-ZW-Chr">
                             <connections>
-                                <segue destination="jhn-NU-xfC" kind="show" id="KXb-E9-bJd"/>
+                                <segue destination="BYZ-38-t0r" kind="presentation" modalPresentationStyle="fullScreen" id="Ldo-Xh-Lkn"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -197,9 +197,21 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="lS3-ih-Mea"/>
+                                    <barButtonItem title="Cancel" image="xmark" catalog="system" id="hgl-H6-cRG">
+                                        <connections>
+                                            <segue destination="TnW-Hn-rWS" kind="unwind" unwindAction="myUnwindActionWithUnwindSegue:" id="sFW-dG-vw0"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="RFX-Cp-76x"/>
                                     <barButtonItem style="done" systemItem="save" id="Qdv-C6-qPx" userLabel="Save Button">
                                         <connections>
                                             <action selector="saveMeme" destination="BYZ-38-t0r" id="951-rJ-z0B"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Abr-LY-9D3"/>
+                                    <barButtonItem systemItem="action" id="Fh3-1R-xrJ">
+                                        <connections>
+                                            <action selector="shareMeme" destination="BYZ-38-t0r" id="h0y-Pa-jcc"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -282,11 +294,13 @@
                         <outlet property="memeView" destination="NIN-pG-hVB" id="Ypr-kV-WUa"/>
                         <outlet property="myPhoto" destination="zuq-Iq-6lL" id="rkK-dq-Zi6"/>
                         <outlet property="saveButton" destination="Qdv-C6-qPx" id="bYI-dV-GHG"/>
+                        <outlet property="shareButton" destination="Fh3-1R-xrJ" id="W8i-dx-6k9"/>
                         <outlet property="toolbar" destination="7Zh-9j-cT8" id="UAv-8m-plk"/>
                         <outlet property="topText" destination="p3c-2y-adg" id="I32-U0-hal"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <exit id="TnW-Hn-rWS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-4152" y="1"/>
         </scene>
@@ -299,10 +313,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zku-vs-qVW">
-                                <rect key="frame" x="0.0" y="91" width="390" height="621"/>
+                                <rect key="frame" x="0.0" y="47" width="390" height="719"/>
                             </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9NU-df-nCk" userLabel="Tool Bar">
-                                <rect key="frame" x="0.0" y="712" width="390" height="49"/>
+                                <rect key="frame" x="0.0" y="766" width="390" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="TqH-NL-ZPw"/>
                                     <barButtonItem systemItem="edit" id="hAY-GW-LI8">
@@ -350,7 +364,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="TGe-am-u1C"/>
+        <segue reference="481-2h-aw8"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="crop.rotate" catalog="system" width="113" height="128"/>
@@ -358,6 +372,7 @@
         <image name="photo.on.rectangle.angled" catalog="system" width="128" height="98"/>
         <image name="plus.app.fill" catalog="system" width="128" height="114"/>
         <image name="square.grid.3x3.fill" catalog="system" width="128" height="113"/>
+        <image name="xmark" catalog="system" width="128" height="113"/>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

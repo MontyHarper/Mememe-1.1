@@ -21,6 +21,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var cameraButton: UIBarButtonItem!
     @IBOutlet weak var cropButton: UIBarButtonItem!
     @IBOutlet weak var saveButton: UIBarButtonItem!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var topText: UITextField!
     @IBOutlet weak var bottomText: UITextField!
     @IBOutlet weak var toolbar: UIToolbar!
@@ -105,6 +106,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
         
         toggleCrop() // Activates or deactivates crop button
+        shareButton.isEnabled = myMeme.isSharable
     }
     
     
@@ -162,11 +164,52 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         
         // Saves meme and dismisses the editor.
             saveMyMeme()
+            // if we got here from the image view, this dismisses the editor
             delegate?.updateMeme(myMeme)
             delegate?.hidesBottomBarWhenPushed = true
             navigationController?.setNavigationBarHidden(false, animated: false)
             navigationController?.popViewController(animated: true)
+            // if we got here from the saved memes view, this dismisses the editor
+            dismiss(animated: true)
     }
+    
+    @IBAction func shareMeme() {
+
+        saveMyMeme()
+        
+        let activityController = UIActivityViewController(activityItems: [myMeme.memedImage!], applicationActivities: nil)
+            
+          /*
+           completionWithItemsHandler is an enclosure attatched to the activity view controller.
+           The view controller will execute this code when the user has completed or dismissed the activity.
+           In version 1.0 this is where the meme was saved.
+           I have separated that functionality for version 2.0.
+           Memes are saved in the editor so they can be saved "In Progress."
+           They can be shared from here (the detail view), but only once they have been completed.
+           All this really does now is close the activity view controller.
+           */
+        activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
+            if let error = activityError {
+                debugPrint(error)
+            }
+            if !completed {
+                debugPrint("The sharing activity was cancelled.")
+            }
+            
+            // Magic courtesy of UdacityGPT, for popping back to Detail view.
+            if let navigationController = self.navigationController,
+               let detailViewController = navigationController.viewControllers.first(where: { $0 is DetailViewController }) {
+                navigationController.popToViewController(detailViewController, animated: true)
+            }
+        }
+        
+        if let popOver = activityController.popoverPresentationController {
+            popOver.sourceView = self.view
+        }
+          
+        present(activityController, animated: true, completion: nil)
+    }
+    
     
     
     // Called by tapping outside of keyboard
@@ -254,6 +297,18 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     }
     
     
+    // Store new field values after editing and toggle the share button.
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if bottomText.text != Meme.bottomPlaceholder {
+            myMeme.bottomText = bottomText.text ?? ""
+        }
+        if topText.text != Meme.topPlaceholder {
+            myMeme.topText = topText.text ?? ""
+        }
+        shareButton.isEnabled = myMeme.isSharable
+    }
+    
+    
     /*
      Presents an empty field to edit if user content has not been provided.
      Otherwise, allows the user to edit their previously entered text.
@@ -277,12 +332,14 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
                         
             self.myPhoto.image = image
             myMeme.image = image
-            toggleCrop()
             dismiss(animated: false, completion: nil)
-                
+            
             } else {
                 myPhoto.image = defaultImage // Should never happen.
             }
+        
+        toggleCrop()
+        shareButton.isEnabled = myMeme.isSharable
     }
     
     
@@ -400,16 +457,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     func saveMyMeme() {
       
-        // Capture the memed image
+        // Capture and save the memed image
         let memedImage = generateMemedImage()
-        
-        /*
-         Set the myMeme properties that haven't been set yet.
-         Note that image properties and cropping properties are not included here.
-         Those get set and reset whenever images are selected or cropped by the user.
-         */
-        myMeme.topText = topText.text!
-        myMeme.bottomText = bottomText.text!
         myMeme.memedImage = memedImage
         
         // This allows access to the meme array for storage.

@@ -31,9 +31,10 @@ class DetailViewController:UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        memeView.image = myMeme.memedImage
-        shareButton.isEnabled = myMeme.isSharable
+            
+        // display the selected meme
+            memeView.image = myMeme.memedImage
+            shareButton.isEnabled = myMeme.isSharable
     }
     
     
@@ -114,6 +115,8 @@ class DetailViewController:UIViewController {
         navigationController?.popViewController(animated: true)
     }
     
+    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
+    }
     
     // MARK: Advocate Functions
     
