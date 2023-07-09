@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F17A31BB2A57AA9C00E92C8E /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17A31BA2A57AA9C00E92C8E /* DetailViewController.swift */; };
+		F17A31C02A59ED8000E92C8E /* OrientationKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17A31BF2A59ED8000E92C8E /* OrientationKit.swift */; };
 		F198990A2A5324830050FA25 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F19899092A5324830050FA25 /* README.md */; };
 		F198990C2A53ADAE0050FA25 /* SavedMemesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F198990B2A53ADAE0050FA25 /* SavedMemesTableViewController.swift */; };
 		F198990E2A53ADCC0050FA25 /* SavedMemesCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F198990D2A53ADCB0050FA25 /* SavedMemesCollectionViewController.swift */; };
@@ -25,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		F17A31BA2A57AA9C00E92C8E /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		F17A31BF2A59ED8000E92C8E /* OrientationKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationKit.swift; sourceTree = "<group>"; };
 		F19899092A5324830050FA25 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		F198990B2A53ADAE0050FA25 /* SavedMemesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMemesTableViewController.swift; sourceTree = "<group>"; };
 		F198990D2A53ADCB0050FA25 /* SavedMemesCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedMemesCollectionViewController.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				F1A9EDDB2A3DE9A400E11C18 /* AppDelegate.swift */,
 				F1A9EDDD2A3DE9A400E11C18 /* SceneDelegate.swift */,
 				F1A9EDEF2A3DEA8800E11C18 /* Meme.swift */,
+				F17A31BF2A59ED8000E92C8E /* OrientationKit.swift */,
 				F17A31BC2A586CC200E92C8E /* View Controllers */,
 				F1A9EDE12A3DE9A400E11C18 /* Main.storyboard */,
 				F1A9EDE42A3DE9A600E11C18 /* Assets.xcassets */,
@@ -179,6 +182,7 @@
 				F17A31BB2A57AA9C00E92C8E /* DetailViewController.swift in Sources */,
 				F19899102A53BA450050FA25 /* MemesCollectionViewCell.swift in Sources */,
 				F1A9EDE02A3DE9A400E11C18 /* MemeEditorViewController.swift in Sources */,
+				F17A31C02A59ED8000E92C8E /* OrientationKit.swift in Sources */,
 				F1A9EDDC2A3DE9A400E11C18 /* AppDelegate.swift in Sources */,
 				F198990E2A53ADCC0050FA25 /* SavedMemesCollectionViewController.swift in Sources */,
 				F1A9EDDE2A3DE9A400E11C18 /* SceneDelegate.swift in Sources */,

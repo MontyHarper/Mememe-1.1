@@ -12,6 +12,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: properties
     
+    /*
+     This is where the memes are kept. It's terrible solution because the app always starts with an empty array.
+     We will learn how to create data persistance soon, I believe.
+     Then I can come back to this.
+     */
     var memes = [Meme]()    
     
     // MARK: application

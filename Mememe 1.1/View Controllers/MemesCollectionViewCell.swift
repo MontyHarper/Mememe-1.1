@@ -4,6 +4,8 @@
 //
 //  Created by Monty Harper on 7/3/23.
 //
+//  My collection view displays each meme as an image.
+//
 
 import Foundation
 import UIKit
