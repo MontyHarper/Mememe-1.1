@@ -13,9 +13,9 @@ import CropViewController
 
 
 class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegate, UITextFieldDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
- 
     
-// MARK: IBOutlets
+    
+    // MARK: IBOutlets
     
     @IBOutlet weak var myPhoto: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
@@ -26,11 +26,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     @IBOutlet weak var bottomText: UITextField!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var memeView: UIView!
-
-
-
-   
-// MARK: Properties
+    
+    
+    
+    
+    // MARK: Properties
     
     // Default image to use for testing purposes
     let defaultImage: UIImage = UIImage(named:"Sinclair-ZX81")!
@@ -46,18 +46,18 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // Struct instance in which to store the working meme.
     var myMeme = Meme()
-
+    
     // Tracks the vertical offset of the view in order to keep the keyboard from obscuring the text.
     var viewIsRaisedBy = 0.0
     
     // Use to prevent text fields from reverting to original state when view is re-drawn.
     var textSetupIsComplete:Bool = false
-
+    
     // Allows the editor to pass the updated meme back to the detail view controller.
     weak var delegate:DetailViewController?
     
     
-// MARK: Lifecycle Methods
+    // MARK: Lifecycle Methods
     
     
     override func viewWillAppear(_ animated:Bool) {
@@ -119,7 +119,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
      */
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-   
+        
         if let pvc = presentedViewController {
             if pvc is CropViewController {
                 presentedViewController?.dismiss(animated: true, completion: nil)
@@ -130,10 +130,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     }
     
     
-//MARK: IBActions
-
+    //MARK: IBActions
+    
     @IBAction func selectPhoto(_ sender: UIButton) {
-       
+        
         let pickerController = UIImagePickerController()
         pickerController.delegate = self
         
@@ -144,10 +144,10 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         default:
             pickerController.sourceType = .photoLibrary
         }
-       
+        
         present(pickerController, animated: true, completion: nil)
     }
-
+    
     
     
     @IBAction func crop() {
@@ -157,42 +157,45 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             toggleCrop() // Crop button should already be disabled if there is no image.
         }
     }
-
+    
     
     
     @IBAction func saveMeme() {
         
         // Saves meme and dismisses the editor.
-            saveMyMeme()
-            // if we got here from the image view, this dismisses the editor
-            delegate?.updateMeme(myMeme)
-            delegate?.hidesBottomBarWhenPushed = true
-            navigationController?.setNavigationBarHidden(false, animated: false)
-            navigationController?.popViewController(animated: true)
-            // if we got here from the saved memes view, this dismisses the editor
-            dismiss(animated: true)
+        saveMyMeme()
+        // if we got here from the image view, this dismisses the editor
+        delegate?.updateMeme(myMeme)
+        delegate?.hidesBottomBarWhenPushed = true
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.popViewController(animated: true)
+        // if we got here from the saved memes view, this dismisses the editor
+        dismiss(animated: true)
     }
     
     @IBAction func shareMeme() {
-
+        
         saveMyMeme()
         
         let activityController = UIActivityViewController(activityItems: [myMeme.memedImage!], applicationActivities: nil)
-            
-          /*
-           completionWithItemsHandler is an enclosure attatched to the activity view controller.
-           The view controller will execute this code when the user has completed or dismissed the activity.
-           In version 1.0 this is where the meme was saved.
-           I have separated that functionality for version 2.0.
-           Memes are saved in the editor so they can be saved "In Progress."
-           They can be shared from here (the detail view), but only once they have been completed.
-           All this really does now is close the activity view controller.
-           */
+        
+        /*
+         completionWithItemsHandler is an enclosure attatched to the activity view controller.
+         The view controller will execute this code when the user has completed or dismissed the activity.
+         In version 1.0 this is where the meme was saved.
+         I have separated that functionality for version 2.0.
+         Memes are saved in the editor so they can be saved "In Progress."
+         They can be shared from here (the detail view), but only once they have been completed.
+         All this really does now is close the activity view controller.
+         */
         activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
             if let error = activityError {
                 debugPrint(error)
             }
-            if !completed {
+            
+            if completed {
+                self.saveMyMeme()
+            } else {
                 debugPrint("The sharing activity was cancelled.")
             }
             
@@ -206,7 +209,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         if let popOver = activityController.popoverPresentationController {
             popOver.sourceView = self.view
         }
-          
+        
         present(activityController, animated: true, completion: nil)
     }
     
@@ -262,7 +265,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
         toolbar.isHidden = false
     }
-   
+    
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat {
         let userInfo = notification.userInfo
@@ -270,19 +273,20 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         return keyboardSize.cgRectValue.height
     }
     
-
+    
     
     // MARK: Text field functions
     
     // Formats the text fields; this happens once when the editor is presented.
     func setupText(_ textFields:UITextField...) {
-        for field in textFields {
-            field.defaultTextAttributes = memeTextAttributes
-            field.textAlignment = .center
-            field.autocapitalizationType = .allCharacters
+        
+        textFields.forEach ({
+            $0.defaultTextAttributes = memeTextAttributes
+            $0.textAlignment = .center
+            $0.autocapitalizationType = .allCharacters
             // the field's placeholder text is used to replace an empty text field
-            field.placeholder = field.text
-        }
+            $0.placeholder = $0.text
+        })
         
         textSetupIsComplete = true
     }
@@ -319,7 +323,7 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
         return true
     }
-   
+    
     
     
     // MARK: Image Picker functions
@@ -327,16 +331,16 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     // Saves a selected image to the meme.
     func imagePickerController(_ picker:UIImagePickerController,didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-          
+        
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                        
+            
             self.myPhoto.image = image
             myMeme.image = image
             dismiss(animated: false, completion: nil)
             
-            } else {
-                myPhoto.image = defaultImage // Should never happen.
-            }
+        } else {
+            myPhoto.image = defaultImage // Should never happen.
+        }
         
         toggleCrop()
         shareButton.isEnabled = myMeme.isSharable
@@ -402,12 +406,12 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         // Dismisses crop view with no changes if cancelled.
         cropView.onDidFinishCancelled = { didFinishCancelled in
             self.dismiss(animated:true, completion:nil)
-            }
+        }
         
         present(cropView, animated: true, completion: nil)
     }
     
-
+    
     // handles the edited image once it has been cropped
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         self.myPhoto.image = image
@@ -428,11 +432,11 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
         
         self.dismiss(animated: true, completion: nil)
-   }
+    }
     
     
     // MARK: Other Functions
- 
+    
     
     // Captures the meme elements as a single image which can then be shared or saved.
     func generateMemedImage() -> UIImage {
@@ -456,14 +460,14 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
     
     
     func saveMyMeme() {
-      
+        
         // Capture and save the memed image
         let memedImage = generateMemedImage()
         myMeme.memedImage = memedImage
         
         // This allows access to the meme array for storage.
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
+        
         /*
          If myMeme is an update of an existing meme, replace the old meme with the new information.
          Otherwise, give myMeme an ID number for future reference and save it at the end of the array.
@@ -483,8 +487,8 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
             cropButton.isEnabled = false
         } else {
             cropButton.isEnabled = true
-            }
         }
+    }
     
     
     func reloadImage() {
@@ -513,6 +517,6 @@ class MemeEditorViewController: UIViewController, UIImagePickerControllerDelegat
         }
     }
     
-        
+    
 }
 

@@ -31,16 +31,16 @@ class DetailViewController:UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-            
+        
         // display the selected meme
-            memeView.image = myMeme.memedImage
-            shareButton.isEnabled = myMeme.isSharable
+        memeView.image = myMeme.memedImage
+        shareButton.isEnabled = myMeme.isSharable
     }
     
     
-        
+    
     // MARK: IBActions
-        
+    
     @IBAction func edit() {
         let editor = storyboard?.instantiateViewController(withIdentifier: "EditorView") as! MemeEditorViewController
         editor.myMeme = myMeme
@@ -51,18 +51,18 @@ class DetailViewController:UIViewController {
     }
     
     @IBAction func share() {
-            
+        
         let activityController = UIActivityViewController(activityItems: [myMeme.memedImage!], applicationActivities: nil)
-            
-          /*
-           completionWithItemsHandler is an enclosure attatched to the activity view controller.
-           The view controller will execute this code when the user has completed or dismissed the activity.
-           In version 1.0 this is where the meme was saved.
-           I have separated that functionality for version 2.0.
-           Memes are saved in the editor so they can be saved "In Progress."
-           They can be shared from here (the detail view), but only once they have been completed.
-           All this really does now is close the activity view controller.
-           */
+        
+        /*
+         completionWithItemsHandler is an enclosure attatched to the activity view controller.
+         The view controller will execute this code when the user has completed or dismissed the activity.
+         In version 1.0 this is where the meme was saved.
+         I have separated that functionality for version 2.0.
+         Memes are saved in the editor so they can be saved "In Progress."
+         They can be shared from here (the detail view), but only once they have been completed.
+         All this really does now is close the activity view controller.
+         */
         activityController.completionWithItemsHandler = { (activityType, completed, returnedItems, activityError) in
             if let error = activityError {
                 debugPrint(error)
@@ -81,15 +81,15 @@ class DetailViewController:UIViewController {
         if let popOver = activityController.popoverPresentationController {
             popOver.sourceView = self.view
         }
-          
+        
         present(activityController, animated: true, completion: nil)
     }
     
     @IBAction func delete() {
-
+        
         // This allows access to the meme array
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-    
+        
         /*
          myMeme.id is the index number for that meme in the array.
          Use it to remove the meme from the array.
@@ -127,6 +127,6 @@ class DetailViewController:UIViewController {
         shareButton.isEnabled = myMeme.isSharable
     }
     
-
+    
     
 }

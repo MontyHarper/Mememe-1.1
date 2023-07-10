@@ -11,8 +11,18 @@ import Foundation
 import UIKit
 
 class SavedMemesCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
-
+    
+    
+    // MARK: Outlets
+    
+    // UIKit uses a flow layout object to determine spacing for the grid.
+    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
+    
+    
+    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
+    }
+    
+    
     // MARK: Properties
     
     // Loading in all the memes to display.
@@ -28,16 +38,8 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
     var xDimension:CGFloat = 20.0
     var yDimension:CGFloat = 20.0
     
-
-
-    // MARK: Outlets
-    
-    // UIKit uses a flow layout object to determine spacing for the grid.
-    @IBOutlet weak var flowLayout: UICollectionViewFlowLayout!
     
     
-    @IBAction func myUnwindAction(unwindSegue: UIStoryboardSegue) {
-    }
     
     
     // MARK: Lifecycle Functions
@@ -54,12 +56,12 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         if memes.count == 0 {
             let alert = UIAlertController(title: "No Memes Yet to Show", message: "Please use the + button in the upper right hand corner to start a new meme. I could do that for you, but Udacity won't let me. 🤪", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"), style: .default, handler: { _ in
-            NSLog("The \"OK\" alert occured.")
+                NSLog("The \"OK\" alert occured.")
             }))
             self.present(alert, animated: true, completion: nil)
         }
     }
-        
+    
     // Necessary to display changes after returning from the editor.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -88,7 +90,7 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         cell.imageView?.image = meme.memedImage
         return cell
     }
-
+    
     override func collectionView(_ collectionView:UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailView = storyboard?.instantiateViewController(withIdentifier: "DetailView") as! DetailViewController
         let selectedMeme = memes[indexPath.row]
@@ -106,7 +108,7 @@ class SavedMemesCollectionViewController: UICollectionViewController, UICollecti
         
         // Returns a long and a short dimension for the view.
         let size = dimensions(view.frame)
-
+        
         switch OKit.layoutStyle { // Spacing is dependent on horizontal vs. vertical orientation.
         case .vertical:
             space = 10.0 // Adjust space between cells

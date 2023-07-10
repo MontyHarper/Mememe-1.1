@@ -73,7 +73,7 @@ class SavedMemesTableViewController: UITableViewController {
         
         // Checks current device orientation
         resetLayoutStyle()
-
+        
         // Gets the .short and .long dimensions of the table view.
         let size = dimensions(tableView.frame)
         
